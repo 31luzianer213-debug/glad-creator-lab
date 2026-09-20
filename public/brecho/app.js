@@ -103,7 +103,11 @@ function transformarProduto(produto) {
         status: produto.status,
         description: produto.descricao,
         trade: produto.troca,
-        image: produto.imagem || productImages[produto.codigo] || ""
+        image: (produto.imagem
+            ? (String(produto.imagem).startsWith("/")
+                ? API_URL.replace(/\/api$/, "") + produto.imagem
+                : produto.imagem)
+            : productImages[produto.codigo]) || ""
     };
 }
 
