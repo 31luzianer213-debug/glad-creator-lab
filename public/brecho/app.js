@@ -2395,15 +2395,8 @@ async function sairDaADM() {
 function configurarADM() {
     const form = document.getElementById("adm-form");
 
-    const signupButton =
-        document.getElementById("adm-signup-btn");
-
     const logoutButton =
         document.getElementById("adm-logout-btn");
-
-    if (signupButton) {
-        signupButton.addEventListener("click", () => acessarADM(true));
-    }
 
     if (logoutButton) {
         logoutButton.addEventListener("click", sairDaADM);
