@@ -1791,7 +1791,7 @@ footer span:last-child {
     }
 
     header nav > button:first-child span:last-child {
-        display: none;
+        font-size: 0.75rem;
     }
 
     .mobile-toggle {
@@ -1998,5 +1998,39 @@ footer span:last-child {
     .canva-panel {
         box-shadow: none !important;
         border: 1px solid #ccc;
+    }
+}
+/* =========================================================
+   ÁREAS DE TOQUE — MOBILE E TABLET
+   ========================================================= */
+
+@media (max-width: 850px) {
+
+    .mobile-toggle {
+        min-width: 44px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .screen > div > button:first-child,
+    .screen button.inline-flex {
+        min-height: 44px;
+    }
+
+    .action-button,
+    form button[type="submit"],
+    .mobile-menu .nav-link {
+        min-height: 48px;
+    }
+
+    label > input[type="radio"],
+    label > input[type="checkbox"] {
+        width: 1.15rem;
+        height: 1.15rem;
+        min-width: 1.15rem;
+        min-height: 1.15rem;
+        flex: none;
     }
 }
