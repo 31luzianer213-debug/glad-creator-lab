@@ -1914,10 +1914,15 @@ footer span:last-child {
     .screen,
     main,
     section,
-    header,
     footer {
         overflow-x: hidden;
     }
+
+    /* O header NÃO pode recortar: o menu suspenso sai para fora dele */
+    header {
+        overflow: visible;
+    }
+
 
     .grid,
     [class*="grid"] {
