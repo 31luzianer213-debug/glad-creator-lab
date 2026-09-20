@@ -22,6 +22,13 @@
       "when": 1789930846430,
       "tag": "0002_hardening_seguranca_banco",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1789930896002,
+      "tag": "0003_ajustar_check_categoria",
+      "breakpoints": true
     }
   ]
 }
