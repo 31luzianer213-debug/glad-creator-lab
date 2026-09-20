@@ -16,7 +16,18 @@ export const Route = createFileRoute("/")({
           "Brechó Solidário Online: encontre peças, reserve itens e participe de trocas solidárias.",
       },
       { property: "og:type", content: "website" },
+      {
+        property: "og:image",
+        content:
+          "https://images.pexels.com/photos/6068975/pexels-photo-6068975.jpeg",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://images.pexels.com/photos/6068975/pexels-photo-6068975.jpeg",
+      },
       { name: "twitter:card", content: "summary_large_image" },
+
     ],
   }),
   component: Index,
