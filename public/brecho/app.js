@@ -907,7 +907,7 @@ async function carregarReservas() {
         }
 
         reservas =
-            await resposta.json();
+            garantirLista(await resposta.json());
 
         aplicarStatusDasReservas();
         renderReservations();
@@ -925,7 +925,7 @@ async function carregarReservas() {
 }
 
 function aplicarStatusDasReservas() {
-    reservas.forEach((reserva) => {
+    garantirLista(reservas).forEach((reserva) => {
         const produto =
             products[reserva.codigoProduto];
 
@@ -1044,7 +1044,7 @@ async function carregarAvaliacoes() {
         }
 
         avaliacoes =
-            await resposta.json();
+            garantirLista(await resposta.json());
 
         renderFeedback();
 
