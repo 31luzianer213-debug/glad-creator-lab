@@ -264,18 +264,35 @@ function escaparHTML(valor) {
         .replace(/'/g, "&#39;");
 }
 
+// Garante que o que veio do banco seja sempre uma lista utilizável
+function garantirLista(valor) {
+    if (Array.isArray(valor)) return valor;
+    if (valor && Array.isArray(valor.data)) return valor.data;
+    return [];
+}
+
+function textoOuPadrao(valor, padrao) {
+    const texto = typeof valor === "string" ? valor.trim() : valor ?? "";
+    return String(texto).length ? String(texto) : padrao;
+}
+
 function transformarProduto(produto) {
+    const item = produto && typeof produto === "object" ? produto : {};
+    const codigo = textoOuPadrao(item.codigo, "");
+    const imagens =
+        typeof productImages === "object" && productImages ? productImages : {};
+
     return {
-        id: produto._id,
-        code: produto.codigo,
-        name: produto.nome,
-        category: produto.categoria,
-        size: produto.tamanho,
-        condition: produto.estado,
-        status: produto.status,
-        description: produto.descricao,
-        trade: produto.troca,
-        image: (produto.imagem || productImages[produto.codigo]) || ""
+        id: item._id ?? item.id ?? "",
+        code: codigo,
+        name: textoOuPadrao(item.nome, "Peça sem nome"),
+        category: textoOuPadrao(item.categoria, "adulto"),
+        size: textoOuPadrao(item.tamanho, "Não informado"),
+        condition: textoOuPadrao(item.estado, "Não informado"),
+        status: textoOuPadrao(item.status, "available"),
+        description: textoOuPadrao(item.descricao, ""),
+        trade: textoOuPadrao(item.troca, ""),
+        image: textoOuPadrao(item.imagem, "") || imagens[codigo] || ""
     };
 }
 
@@ -287,12 +304,13 @@ async function carregarProdutos() {
             throw new Error("Erro ao buscar produtos.");
         }
 
-        const dados = await resposta.json();
+        const dados = garantirLista(await resposta.json());
 
         products = {};
 
         dados.forEach((produto) => {
             const produtoFormatado = transformarProduto(produto);
+            if (!produtoFormatado.code) return;
             products[produtoFormatado.code] = produtoFormatado;
         });
 
@@ -889,7 +907,7 @@ async function carregarReservas() {
         }
 
         reservas =
-            await resposta.json();
+            garantirLista(await resposta.json());
 
         aplicarStatusDasReservas();
         renderReservations();
@@ -907,7 +925,7 @@ async function carregarReservas() {
 }
 
 function aplicarStatusDasReservas() {
-    reservas.forEach((reserva) => {
+    garantirLista(reservas).forEach((reserva) => {
         const produto =
             products[reserva.codigoProduto];
 
@@ -1026,7 +1044,7 @@ async function carregarAvaliacoes() {
         }
 
         avaliacoes =
-            await resposta.json();
+            garantirLista(await resposta.json());
 
         renderFeedback();
 
@@ -1054,7 +1072,9 @@ function renderFeedback() {
 
     if (!list) return;
 
-    if (!avaliacoes.length) {
+    const listaAvaliacoes = garantirLista(avaliacoes);
+
+    if (!listaAvaliacoes.length) {
         list.innerHTML =
             `
             <div class="rounded-xl bg-slate-50 p-4 text-sm text-slate-600">
@@ -1066,7 +1086,7 @@ function renderFeedback() {
     }
 
     list.innerHTML =
-        avaliacoes
+        listaAvaliacoes
             .map((avaliacao) => {
                 const nota =
                     Number(
@@ -1180,7 +1200,9 @@ function renderReservations() {
 
     if (!list) return;
 
-    if (!reservas.length) {
+    const listaReservas = garantirLista(reservas);
+
+    if (!listaReservas.length) {
         list.innerHTML =
             `
             <div class="rounded-xl bg-slate-50 p-4 text-sm text-slate-600">
@@ -1192,7 +1214,7 @@ function renderReservations() {
     }
 
     list.innerHTML =
-        reservas
+        listaReservas
             .map((reserva) => {
                 const status =
                     reserva.status ||
@@ -2687,3 +2709,66 @@ document.addEventListener(
         inicializarSistema();
     }
 );
+// ========================================
+// REDE DE SEGURANÇA DE TELA (ERROR BOUNDARY)
+// Se algo quebrar durante a montagem da página,
+// mostramos um aviso amigável com opção de tentar de novo.
+// ========================================
+
+function mostrarAvisoDeFalha() {
+    if (document.getElementById("app-error-boundary")) return;
+
+    const aviso = document.createElement("div");
+    aviso.id = "app-error-boundary";
+    aviso.setAttribute("role", "alert");
+    aviso.style.cssText =
+        "position:fixed;left:0;right:0;bottom:0;z-index:9999;margin:0 auto;" +
+        "max-width:36rem;padding:1rem 1.25rem;background:#fff7ed;" +
+        "border:1px solid #fdba74;border-radius:1rem 1rem 0 0;" +
+        "box-shadow:0 -6px 20px rgba(15,23,42,.12);font-family:inherit;color:#334155";
+
+    aviso.innerHTML =
+        '<p style="font-weight:700;color:#0f172a;margin:0">Algo não carregou como esperado.</p>' +
+        '<p style="margin:.25rem 0 .75rem;font-size:.875rem">Suas informações estão salvas. Você pode tentar novamente.</p>' +
+        '<div style="display:flex;gap:.5rem;flex-wrap:wrap">' +
+        '<button type="button" id="app-error-retry" style="min-height:44px;padding:.5rem 1rem;border:0;border-radius:.75rem;background:#f97316;color:#fff;font-weight:700;cursor:pointer">Tentar novamente</button>' +
+        '<button type="button" id="app-error-dismiss" style="min-height:44px;padding:.5rem 1rem;border:1px solid #cbd5e1;border-radius:.75rem;background:#fff;color:#334155;cursor:pointer">Continuar mesmo assim</button>' +
+        "</div>";
+
+    document.body.appendChild(aviso);
+
+    const botaoTentar = document.getElementById("app-error-retry");
+    const botaoFechar = document.getElementById("app-error-dismiss");
+
+    if (botaoTentar) {
+        botaoTentar.addEventListener("click", async () => {
+            botaoTentar.disabled = true;
+            botaoTentar.textContent = "Carregando...";
+
+            try {
+                await carregarProdutos();
+                await carregarReservas();
+                await carregarAvaliacoes();
+                aviso.remove();
+            } catch (erro) {
+                console.error("Nova tentativa falhou:", erro);
+                botaoTentar.disabled = false;
+                botaoTentar.textContent = "Tentar novamente";
+            }
+        });
+    }
+
+    if (botaoFechar) {
+        botaoFechar.addEventListener("click", () => aviso.remove());
+    }
+}
+
+window.addEventListener("error", (evento) => {
+    console.error("Falha de renderização:", evento.error || evento.message);
+    mostrarAvisoDeFalha();
+});
+
+window.addEventListener("unhandledrejection", (evento) => {
+    console.error("Falha não tratada:", evento.reason);
+    mostrarAvisoDeFalha();
+});
