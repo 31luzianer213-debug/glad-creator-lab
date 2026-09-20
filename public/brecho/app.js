@@ -378,14 +378,14 @@ function criarCardProduto(produto) {
                 </p>
 
                 <p class="mt-1 font-bold text-slate-700">
-                    ${troca}
+                    ${escaparHTML(troca)}
                 </p>
             </div>
 
             <button
                 type="button"
                 class="mt-5 w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-extrabold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
-                onclick="openProduct('${produto.code}')"
+                onclick="openProduct('${escaparHTML(produto.code)}')"
             >
                 VER PRODUTO
             </button>
