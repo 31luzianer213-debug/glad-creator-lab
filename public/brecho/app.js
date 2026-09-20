@@ -132,6 +132,11 @@ async function apiBrecho(caminho, opcoes) {
             mensagem = "Já existe um produto com esse código.";
         }
 
+        if (String(erro?.code) === "23514") {
+            mensagem =
+                "Alguns dados estão fora do formato aceito. Revise os campos e tente novamente.";
+        }
+
         if (String(mensagem).toLowerCase().includes("row-level security")) {
             mensagem = "Você precisa estar logado como equipe para fazer isso.";
         }
