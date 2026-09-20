@@ -1,9 +1,18 @@
 <!doctype html>
+<html lang="pt-BR">
+ <head>
   <meta charset="UTF-8">
+  <meta name="description" content="Brechó Solidário Online: escolha uma peça, troque por doações e ajude quem precisa. Catálogo, regras da troca e reserva online.">
+  <meta property="og:title" content="Brechó Solidário Online">
+  <meta property="og:description" content="Escolha. Troque. Faça o bem. Catálogo de peças e troca solidária.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://images.pexels.com/photos/6068975/pexels-photo-6068975.jpeg">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Brechó Solidário Online</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800&amp;family=Fraunces:opsz,wght@9..144,700;9..144,800&amp;display=swap" rel="stylesheet">
   <style>
     :root {
@@ -355,10 +364,15 @@
      <div class="rounded-[1.5rem] bg-white p-6 shadow-sm sm:p-9">
       <p data-template-id="adm-kicker" class="canva-text text-sm font-extrabold tracking-[.16em]" style="color: rgb(239, 107, 46); font-weight: 800; font-style: normal; font-size: 16px;">ÁREA RESTRITA</p>
       <h2 data-template-id="adm-title" class="canva-text brand-font mt-2 font-bold" style="color: rgb(9, 42, 70); font-weight: 800; font-style: normal; font-size: 24px;">Acesso da equipe</h2>
-      <p data-template-id="adm-description" class="canva-text mt-3 text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Digite o código de acesso da equipe para abrir pedidos e controle de vendas.</p>
+      <p data-template-id="adm-description" class="canva-text mt-3 text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Entre com o e-mail e a senha da equipe para abrir pedidos e controle de vendas.</p>
       <form id="adm-form" class="mt-7">
-       <label data-template-id="adm-code-label" class="canva-text mb-2 block text-sm font-bold" for="adm-code" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 16px;">Código de acesso</label> <input id="adm-code" type="password" class="field" autocomplete="off" required="">
-       <p id="adm-message" class="mt-3 text-sm font-semibold" aria-live="polite"></p><button data-template-id="adm-submit-button" type="submit" class="canva-button action-button mt-5 w-full rounded-xl px-6 py-4 font-extrabold text-white" style="background: rgb(239, 107, 46); color: rgb(255, 255, 255); font-weight: 800; font-style: normal; font-size: 16px;">ENTRAR NA ADM</button>
+       <label class="mb-2 block text-sm font-bold" for="adm-email" style="color:#092a46">E-mail da equipe</label>
+       <input id="adm-email" type="email" class="field" autocomplete="email" required>
+       <label class="mb-2 mt-4 block text-sm font-bold" for="adm-password" style="color:#092a46">Senha</label>
+       <input id="adm-password" type="password" class="field" autocomplete="current-password" minlength="6" required>
+       <p id="adm-message" class="mt-3 text-sm font-semibold" aria-live="polite"></p>
+       <button type="submit" class="action-button mt-5 w-full rounded-xl px-6 py-4 font-extrabold text-white" style="background:#ef6b2e">ENTRAR NA ADM</button>
+       <button type="button" id="adm-signup-btn" class="mt-3 w-full rounded-xl border-2 px-6 py-3 font-bold" style="border-color:#092a46;color:#092a46">CRIAR ACESSO DA EQUIPE</button>
       </form>
      </div>
     </div>
@@ -366,6 +380,10 @@
    <section id="management" class="screen">
 
     <div class="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6">
+
+        <div class="mb-4 flex justify-end">
+            <button type="button" id="adm-logout-btn" class="rounded-lg border-2 px-4 py-2 text-sm font-bold" style="border-color:#092a46;color:#092a46">SAIR DA ADM</button>
+        </div>
 
         <!-- CABEÇALHO DO ADM -->
         <div class="max-w-2xl">
