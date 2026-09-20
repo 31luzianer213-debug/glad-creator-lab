@@ -613,13 +613,18 @@ function openProduct(code) {
         document.getElementById("detail-image");
 
     if (image) {
+        image.onerror = () => {
+            image.style.display = "none";
+        };
+
         if (product.image) {
             image.src = product.image;
-            image.alt = product.name;
+            image.alt = product.name || "Imagem do produto";
             image.style.display = "";
         } else {
             image.removeAttribute("src");
             image.alt = "Imagem não cadastrada";
+            image.style.display = "none";
         }
     }
 
