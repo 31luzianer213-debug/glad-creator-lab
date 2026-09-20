@@ -264,18 +264,35 @@ function escaparHTML(valor) {
         .replace(/'/g, "&#39;");
 }
 
+// Garante que o que veio do banco seja sempre uma lista utilizável
+function garantirLista(valor) {
+    if (Array.isArray(valor)) return valor;
+    if (valor && Array.isArray(valor.data)) return valor.data;
+    return [];
+}
+
+function textoOuPadrao(valor, padrao) {
+    const texto = typeof valor === "string" ? valor.trim() : valor ?? "";
+    return String(texto).length ? String(texto) : padrao;
+}
+
 function transformarProduto(produto) {
+    const item = produto && typeof produto === "object" ? produto : {};
+    const codigo = textoOuPadrao(item.codigo, "");
+    const imagens =
+        typeof productImages === "object" && productImages ? productImages : {};
+
     return {
-        id: produto._id,
-        code: produto.codigo,
-        name: produto.nome,
-        category: produto.categoria,
-        size: produto.tamanho,
-        condition: produto.estado,
-        status: produto.status,
-        description: produto.descricao,
-        trade: produto.troca,
-        image: (produto.imagem || productImages[produto.codigo]) || ""
+        id: item._id ?? item.id ?? "",
+        code: codigo,
+        name: textoOuPadrao(item.nome, "Peça sem nome"),
+        category: textoOuPadrao(item.categoria, "adulto"),
+        size: textoOuPadrao(item.tamanho, "Não informado"),
+        condition: textoOuPadrao(item.estado, "Não informado"),
+        status: textoOuPadrao(item.status, "available"),
+        description: textoOuPadrao(item.descricao, ""),
+        trade: textoOuPadrao(item.troca, ""),
+        image: textoOuPadrao(item.imagem, "") || imagens[codigo] || ""
     };
 }
 
@@ -287,12 +304,13 @@ async function carregarProdutos() {
             throw new Error("Erro ao buscar produtos.");
         }
 
-        const dados = await resposta.json();
+        const dados = garantirLista(await resposta.json());
 
         products = {};
 
         dados.forEach((produto) => {
             const produtoFormatado = transformarProduto(produto);
+            if (!produtoFormatado.code) return;
             products[produtoFormatado.code] = produtoFormatado;
         });
 
