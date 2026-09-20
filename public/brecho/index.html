@@ -1,0 +1,765 @@
+<!doctype html>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brechó Solidário Online</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800&amp;family=Fraunces:opsz,wght@9..144,700;9..144,800&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #092a46;
+      --navy-soft: #123e61;
+      --orange: #ef6b2e;
+      --orange-dark: #ce5120;
+      --cream: #fbf7ef;
+      --ink: #17324a;
+      --sage: #dce9dd;
+      --line: #d8e0df;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; font-family: "Work Sans", sans-serif; color: var(--ink); }
+    .app-shell { width: 100%; min-height: calc(100 * min(var(--vh, 1vh), 1vh)); overflow-x: hidden; }
+    .screen { display: none; animation: reveal .35s ease both; }
+    .screen.active { display: block; }
+    @keyframes reveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .brand-font { font-family: "Fraunces", serif; }
+    .nav-link { transition: color .2s ease, background .2s ease; }
+    .nav-link:hover, .nav-link:focus-visible, .nav-link.active { color: var(--orange); background: #fff4ec; }
+    .nav-link.active { box-shadow: inset 0 -3px 0 var(--orange); }
+    .action-button { transition: transform .2s ease, box-shadow .2s ease, background .2s ease; }
+    .action-button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(239,107,46,.24); }
+    .action-button:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 3px solid #f4a47c; outline-offset: 3px;
+    }
+    .category-card:hover { transform: translateY(-5px); }
+    .category-card { transition: transform .25s ease, box-shadow .25s ease; }
+    .product-card { transition: transform .25s ease, box-shadow .25s ease; }
+    .product-card:hover { transform: translateY(-4px); box-shadow: 0 18px 36px rgba(9,42,70,.12); }
+    .status { display: inline-flex; align-items: center; gap: .4rem; font-size: .73rem; font-weight: 800; letter-spacing: .04em; border-radius: 999px; padding: .38rem .65rem; }
+    .status.available { background: #e2f5e8; color: #19723a; }
+    .status.reserved { background: #fff0db; color: #a84912; }
+    .status.exchanged { background: #e4eff9; color: #176198; }
+    .status.sold { background: #ececec; color: #555b63; }
+    .step-number { width: 2.7rem; height: 2.7rem; display: grid; place-items: center; border-radius: 999px; background: var(--orange); color: white; font-weight: 800; }
+    .field { width: 100%; border: 1px solid #bdcbc9; border-radius: .8rem; padding: .8rem .9rem; background: white; }
+    .field:focus { border-color: var(--orange); box-shadow: 0 0 0 3px rgba(239,107,46,.14); outline: none; }
+    .hidden-by-filter { display: none !important; }
+    .mobile-menu { display: none; }
+    .mobile-menu.open { display: flex; }
+    @media (max-width: 767px) {
+      .desktop-links { display: none; }
+      .mobile-toggle { display: inline-flex; }
+      .mobile-menu { position: absolute; inset: 100% 1rem auto 1rem; padding: .7rem; flex-direction: column; background: white; border-radius: 1rem; box-shadow: 0 16px 32px rgba(9,42,70,.18); }
+    }
+    @media (min-width: 768px) { .mobile-toggle { display: none; } }
+  </style>
+ </head>
+ <body data-template-id="__page-root" class="app-shell" style="background: rgb(251, 247, 239);">
+  <header class="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
+   <nav class="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3 sm:px-6" aria-label="Navegação principal">
+    <button type="button" class="flex items-center gap-3 text-left" onclick="showScreen('home')"> <span class="grid h-10 w-10 place-items-center rounded-xl text-white" style="background:#092a46"><i data-lucide="recycle" width="21"></i></span> <span> <strong class="block text-sm leading-tight" style="color:#092a46">BRECHÓ</strong> <span class="block text-xs font-semibold text-orange-600">SOLIDÁRIO</span> </span> </button>
+    <div class="desktop-links flex items-center gap-1 text-sm font-semibold">
+     <button type="button" class="nav-link rounded-lg px-3 py-2" data-nav-screen="home" onclick="showScreen('home')">Início</button> <button type="button" class="nav-link rounded-lg px-3 py-2" data-nav-screen="catalog" onclick="showScreen('catalog')">Catálogo</button> <button type="button" class="nav-link rounded-lg px-3 py-2" data-nav-screen="how" onclick="showScreen('how')">Como funciona</button> <button type="button" class="nav-link rounded-lg px-3 py-2" data-nav-screen="rules" onclick="showScreen('rules')">Regras</button> <button type="button" class="nav-link rounded-lg px-3 py-2" data-nav-screen="feedback" onclick="showScreen('feedback')">Pós-venda</button> <button type="button" class="nav-link rounded-lg px-3 py-2" data-nav-screen="adm" onclick="showScreen('adm')">ADM</button> 
+    </div><button type="button" class="mobile-toggle rounded-lg p-2 text-slate-700" aria-label="Abrir menu" aria-expanded="false" onclick="toggleMenu(this)"> <i data-lucide="menu"></i> </button>
+    <div id="mobile-menu" class="mobile-menu">
+     <button type="button" class="nav-link rounded-lg px-3 py-2 text-left font-semibold" data-nav-screen="home" onclick="showScreen('home'); closeMenu()">Início</button> <button type="button" class="nav-link rounded-lg px-3 py-2 text-left font-semibold" data-nav-screen="catalog" onclick="showScreen('catalog'); closeMenu()">Catálogo</button> <button type="button" class="nav-link rounded-lg px-3 py-2 text-left font-semibold" data-nav-screen="how" onclick="showScreen('how'); closeMenu()">Como funciona</button> <button type="button" class="nav-link rounded-lg px-3 py-2 text-left font-semibold" data-nav-screen="rules" onclick="showScreen('rules'); closeMenu()">Regras</button> <button type="button" class="nav-link rounded-lg px-3 py-2 text-left font-semibold" data-nav-screen="feedback" onclick="showScreen('feedback'); closeMenu()">Pós-venda</button> <button type="button" class="nav-link rounded-lg px-3 py-2 text-left font-semibold" data-nav-screen="adm" onclick="showScreen('adm'); closeMenu()">ADM</button> <button type="button" class="nav-link rounded-lg px-3 py-2 text-left font-semibold" data-nav-screen="impact" onclick="showScreen('impact'); closeMenu()">Nosso impacto</button>
+    </div>
+   </nav>
+  </header>
+  <main>
+   <section id="home" class="screen active">
+    <div class="mx-auto grid w-full max-w-7xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-2 lg:items-center lg:py-16">
+     <div>
+      <div data-template-id="home-tag" class="canva-tag mb-5 inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold" style="background:#dce9dd;color:#174d37">
+       <i data-lucide="leaf" width="17"></i><span>MODA QUE CUIDA DO FUTURO</span>
+      </div>
+      <h1 data-template-id="home-title" class="canva-text brand-font max-w-xl font-bold leading-[.98]" style="color: rgb(9, 42, 70); font-weight: 800; font-style: normal; font-size: 32px;">BRECHÓ SOLIDÁRIO ONLINE</h1>
+      <p data-template-id="home-slogan" class="canva-text mt-5 text-xl font-bold" style="color: rgb(239, 107, 46); font-weight: 700; font-style: normal; font-size: 22px;">Escolha. Troque. Faça o bem.</p>
+      <p data-template-id="home-description" class="canva-text mt-5 max-w-lg text-lg leading-relaxed text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 18px;">Dê uma nova história a uma peça e transforme sua escolha em solidariedade.</p>
+      <div class="mt-8 flex flex-wrap gap-3">
+       <button data-template-id="home-products-button" type="button" class="canva-button action-button rounded-xl px-5 py-3 font-bold text-white" style="background: rgb(239, 107, 46); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;" onclick="showScreen('catalog')">VER PRODUTOS</button> <button data-template-id="home-how-button" type="button" class="canva-button rounded-xl border-2 px-5 py-3 font-bold" style="border-color: rgb(9, 42, 70); color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 16px;" onclick="showScreen('how')">COMO FUNCIONA</button> <button data-template-id="home-rules-button" type="button" class="canva-button rounded-xl px-5 py-3 font-bold text-slate-700 hover:bg-slate-100" onclick="showScreen('rules')" style="color: rgb(66, 88, 106); font-weight: 700; font-style: normal; font-size: 16px;">REGRAS DA TROCA</button>
+      </div>
+      <div class="mt-10 flex flex-wrap gap-5 text-sm font-semibold text-slate-600">
+       <span class="flex items-center gap-2"><i data-lucide="heart-handshake" class="text-orange-600" width="18"></i> Troca solidária</span> <span class="flex items-center gap-2"><i data-lucide="shirt" class="text-orange-600" width="18"></i> Peças selecionadas</span> <span class="flex items-center gap-2"><i data-lucide="refresh-ccw" class="text-orange-600" width="18"></i> Economia circular</span>
+      </div>
+     </div>
+     <div class="relative">
+      <div class="absolute -inset-3 rotate-3 rounded-[2rem]" style="background:#ef6b2e"></div><img data-template-id="hero-image" loading="lazy" class="canva-image relative h-[390px] w-full rounded-[1.7rem] object-cover shadow-xl sm:h-[480px]" src="https://images.pexels.com/photos/6068975/pexels-photo-6068975.jpeg" alt="Dois jovens escolhendo roupas em um brechó">
+      <div data-template-id="hero-note" class="canva-banner absolute -bottom-5 left-5 max-w-xs rounded-2xl p-4 shadow-lg" style="background:#ffffff">
+       <p class="text-sm font-bold" style="color:#092a46">Uma escolha pode circular cuidado.</p>
+       <p class="mt-1 text-xs text-slate-500">Dê novo significado ao que já existe.</p>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section id="how" class="screen">
+    <div class="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
+     <button type="button" class="mb-7 inline-flex items-center gap-2 text-sm font-bold hover:text-orange-600" onclick="showScreen('home')"><i data-lucide="arrow-left" width="18"></i> Voltar ao início</button>
+     <div class="max-w-2xl">
+      <p data-template-id="how-kicker" class="canva-text text-sm font-extrabold tracking-[.16em]" style="color: rgb(239, 107, 46); font-weight: 800; font-style: normal; font-size: 16px;">PASSO A PASSO</p>
+      <h2 data-template-id="how-title" class="canva-text brand-font mt-2 font-bold" style="color: rgb(9, 42, 70); font-weight: 800; font-style: normal; font-size: 24px;">Como funciona a troca?</h2>
+      <p data-template-id="how-description" class="canva-text mt-3 text-lg text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 18px;">Cinco passos simples para colocar a solidariedade em circulação.</p>
+     </div>
+     <div class="mt-10 grid gap-4 md:grid-cols-5">
+      <article data-template-id="step-1" class="canva-card rounded-2xl p-5 shadow-sm" style="background:#ffffff">
+       <span class="step-number">1</span><i data-lucide="search" class="mt-5 text-orange-600" width="25"></i>
+       <h3 data-template-id="step-1-title" class="canva-text mt-4 font-bold" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 19px;">Escolha</h3>
+       <p data-template-id="step-1-text" class="canva-text mt-2 text-sm leading-relaxed text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Escolha uma peça disponível no catálogo.</p>
+      </article>
+      <article data-template-id="step-2" class="canva-card rounded-2xl p-5 shadow-sm" style="background:#ffffff">
+       <span class="step-number">2</span><i data-lucide="hand-coins" class="mt-5 text-orange-600" width="25"></i>
+       <h3 data-template-id="step-2-title" class="canva-text mt-4 font-bold" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 19px;">Confira</h3>
+       <p data-template-id="step-2-text" class="canva-text mt-2 text-sm leading-relaxed text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Veja o valor da troca solidária.</p>
+      </article>
+      <article data-template-id="step-3" class="canva-card rounded-2xl p-5 shadow-sm" style="background:#ffffff">
+       <span class="step-number">3</span><i data-lucide="clipboard-check" class="mt-5 text-orange-600" width="25"></i>
+       <h3 data-template-id="step-3-title" class="canva-text mt-4 font-bold" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 19px;">Reserve</h3>
+       <p data-template-id="step-3-text" class="canva-text mt-2 text-sm leading-relaxed text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Preencha seus dados para solicitar a reserva.</p>
+      </article>
+      <article data-template-id="step-4" class="canva-card rounded-2xl p-5 shadow-sm" style="background:#ffffff">
+       <span class="step-number">4</span><i data-lucide="package-heart" class="mt-5 text-orange-600" width="25"></i>
+       <h3 data-template-id="step-4-title" class="canva-text mt-4 font-bold" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 19px;">Doe</h3>
+       <p data-template-id="step-4-text" class="canva-text mt-2 text-sm leading-relaxed text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Entregue os itens indicados para a troca.</p>
+      </article>
+      <article data-template-id="step-5" class="canva-card rounded-2xl p-5 shadow-sm" style="background:#ffffff">
+       <span class="step-number">5</span><i data-lucide="shopping-bag" class="mt-5 text-orange-600" width="25"></i>
+       <h3 data-template-id="step-5-title" class="canva-text mt-4 font-bold" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 19px;">Retire</h3>
+       <p data-template-id="step-5-text" class="canva-text mt-2 text-sm leading-relaxed text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Após a confirmação, retire sua peça.</p>
+      </article>
+     </div><button data-template-id="how-catalog-button" type="button" class="canva-button action-button mt-10 rounded-xl px-6 py-3 font-bold text-white" style="background: rgb(239, 107, 46); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;" onclick="showScreen('catalog')">IR PARA O CATÁLOGO</button>
+    </div>
+   </section>
+   <section id="catalog" class="screen">
+    <div class="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6">
+     <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+       <p data-template-id="catalog-kicker" class="canva-text text-sm font-extrabold tracking-[.16em]" style="color: rgb(239, 107, 46); font-weight: 800; font-style: normal; font-size: 16px;">CATÁLOGO SOLIDÁRIO</p>
+       <h2 data-template-id="catalog-title" class="canva-text brand-font mt-2 font-bold" style="color: rgb(9, 42, 70); font-weight: 800; font-style: normal; font-size: 24px;">Encontre uma peça para recomeçar</h2>
+       <p data-template-id="catalog-description" class="canva-text mt-2 max-w-2xl text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Cada escolha ajuda a prolongar histórias, reduzir desperdícios e apoiar pessoas.</p>
+      </div><button type="button" class="inline-flex items-center gap-2 text-sm font-bold hover:text-orange-600" onclick="showScreen('home')"><i data-lucide="arrow-left" width="18"></i> Voltar ao início</button>
+     </div>
+     <div class="mt-8 grid gap-4 md:grid-cols-3">
+      <button data-template-id="category-adult" type="button" class="canva-card category-card rounded-2xl p-6 text-left shadow-sm" style="background:#ffffff" onclick="filterCategory('adult')"> <span class="grid h-12 w-12 place-items-center rounded-xl text-white" style="background:#092a46"><i data-lucide="shirt"></i></span> <span data-template-id="category-adult-title" class="canva-text mt-5 block font-extrabold" style="color: rgb(9, 42, 70); font-weight: 800; font-style: normal; font-size: 16px;">VESTUÁRIO ADULTO</span> <span data-template-id="category-adult-text" class="canva-text mt-2 block text-sm text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Peças para novos looks e novas histórias.</span> </button> <button data-template-id="category-child" type="button" class="canva-card category-card rounded-2xl p-6 text-left shadow-sm" style="background:#ffffff" onclick="filterCategory('child')"> <span class="grid h-12 w-12 place-items-center rounded-xl text-white" style="background:#ef6b2e"><i data-lucide="baby"></i></span> <span data-template-id="category-child-title" class="canva-text mt-5 block font-extrabold" style="color: rgb(9, 42, 70); font-weight: 800; font-style: normal; font-size: 16px;">VESTUÁRIO INFANTIL</span> <span data-template-id="category-child-text" class="canva-text mt-2 block text-sm text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Peças confortáveis para a infância circular.</span> </button> <button data-template-id="category-accessories" type="button" class="canva-card category-card rounded-2xl p-6 text-left shadow-sm" style="background:#ffffff" onclick="filterCategory('accessories')"> <span class="grid h-12 w-12 place-items-center rounded-xl text-white" style="background:#174d37"><i data-lucide="footprints"></i></span> <span data-template-id="category-accessories-title" class="canva-text mt-5 block font-extrabold" style="color: rgb(9, 42, 70); font-weight: 800; font-style: normal; font-size: 16px;">ACESSÓRIOS E CALÇADOS</span> <span data-template-id="category-accessories-text" class="canva-text mt-2 block text-sm text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Detalhes e passos para completar o visual.</span> </button>
+     </div>
+     <div class="mt-10 flex flex-wrap items-center justify-between gap-3">
+      <h3 data-template-id="products-heading" class="canva-text font-bold" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 22px;">Produtos disponíveis</h3>
+      <div class="flex gap-2">
+       <button type="button" class="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold" onclick="filterCategory('all')">Todos</button> <button type="button" class="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold" onclick="filterCategory('available')">Disponíveis</button>
+      </div>
+     </div>
+     <div id="product-grid" class="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      <article data-product="001" data-category="adult" data-template-id="product-card-001" class="canva-card product-card overflow-hidden rounded-2xl shadow-sm" style="background:#ffffff">
+       <img data-template-id="product-image-001" loading="lazy" class="canva-image h-52 w-full object-cover" src="https://images.pexels.com/photos/4440566/pexels-photo-4440566.jpeg" alt="Camisetas coloridas dobradas">
+       <div class="p-5">
+        <div class="flex items-start justify-between gap-3">
+         <h3 data-template-id="product-name-001" class="canva-text font-bold" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 19px;">Produto 001 – Camiseta Azul</h3><span id="status-001" class="status available">● DISPONÍVEL</span>
+        </div>
+        <p data-template-id="product-meta-001" class="canva-text mt-2 text-sm text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Código 001 · Tam. M · Ótimo estado</p>
+        <p data-template-id="product-value-001" class="canva-text mt-3 text-sm font-bold" style="color: rgb(239, 107, 46); font-weight: 700; font-style: normal; font-size: 16px;">Troca: 2 alimentos não perecíveis</p><button data-template-id="product-button-001" type="button" class="canva-button mt-5 w-full rounded-xl px-4 py-3 font-bold text-white" style="background: rgb(9, 42, 70); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;" onclick="openProduct('001')">VER PRODUTO</button>
+       </div>
+      </article>
+      <article data-product="002" data-category="adult" data-template-id="product-card-002" class="canva-card product-card overflow-hidden rounded-2xl shadow-sm" style="background:#ffffff">
+       <img data-template-id="product-image-002" loading="lazy" class="canva-image h-52 w-full object-cover" src="https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" alt="Três calças jeans dobradas">
+       <div class="p-5">
+        <div class="flex items-start justify-between gap-3">
+         <h3 data-template-id="product-name-002" class="canva-text font-bold" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 19px;">Produto 002 – Calça Jeans</h3><span id="status-002" class="status available">● DISPONÍVEL</span>
+        </div>
+        <p data-template-id="product-meta-002" class="canva-text mt-2 text-sm text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Código 002 · Tam. 40 · Muito bom</p>
+        <p data-template-id="product-value-002" class="canva-text mt-3 text-sm font-bold" style="color: rgb(239, 107, 46); font-weight: 700; font-style: normal; font-size: 16px;">Troca: 3 alimentos não perecíveis</p><button data-template-id="product-button-002" type="button" class="canva-button mt-5 w-full rounded-xl px-4 py-3 font-bold text-white" style="background: rgb(9, 42, 70); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;" onclick="openProduct('002')">VER PRODUTO</button>
+       </div>
+      </article>
+      <article data-product="003" data-category="accessories" data-template-id="product-card-003" class="canva-card product-card overflow-hidden rounded-2xl shadow-sm" style="background:#ffffff">
+       <img data-template-id="product-image-003" loading="lazy" class="canva-image h-52 w-full object-cover" src="https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" alt="Tênis modernos coloridos">
+       <div class="p-5">
+        <div class="flex items-start justify-between gap-3">
+         <h3 data-template-id="product-name-003" class="canva-text font-bold" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 19px;">Produto 003 – Tênis Urbano</h3><span id="status-003" class="status reserved">● RESERVADO</span>
+        </div>
+        <p data-template-id="product-meta-003" class="canva-text mt-2 text-sm text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Código 003 · Tam. 38 · Muito bom</p>
+        <p data-template-id="product-value-003" class="canva-text mt-3 text-sm font-bold" style="color: rgb(239, 107, 46); font-weight: 700; font-style: normal; font-size: 16px;">Troca: 2 produtos de higiene</p><button data-template-id="product-button-003" type="button" class="canva-button mt-5 w-full rounded-xl px-4 py-3 font-bold text-white" style="background: rgb(9, 42, 70); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;" onclick="openProduct('003')">VER PRODUTO</button>
+       </div>
+      </article>
+      <article data-product="004" data-category="accessories" data-template-id="product-card-004" class="canva-card product-card overflow-hidden rounded-2xl shadow-sm" style="background:#ffffff">
+       <img data-template-id="product-image-004" loading="lazy" class="canva-image h-52 w-full object-cover" src="https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" alt="Bolsa de couro marrom">
+       <div class="p-5">
+        <div class="flex items-start justify-between gap-3">
+         <h3 data-template-id="product-name-004" class="canva-text font-bold" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 19px;">Produto 004 – Bolsa Caramelo</h3><span id="status-004" class="status available">● DISPONÍVEL</span>
+        </div>
+        <p data-template-id="product-meta-004" class="canva-text mt-2 text-sm text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Código 004 · Tam. único · Ótimo estado</p>
+        <p data-template-id="product-value-004" class="canva-text mt-3 text-sm font-bold" style="color: rgb(239, 107, 46); font-weight: 700; font-style: normal; font-size: 16px;">Troca: 2 alimentos não perecíveis</p><button data-template-id="product-button-004" type="button" class="canva-button mt-5 w-full rounded-xl px-4 py-3 font-bold text-white" style="background: rgb(9, 42, 70); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;" onclick="openProduct('004')">VER PRODUTO</button>
+       </div>
+      </article>
+      <article data-product="005" data-category="child" data-template-id="product-card-005" class="canva-card product-card overflow-hidden rounded-2xl shadow-sm" style="background:#ffffff">
+       <img data-template-id="product-image-005" loading="lazy" class="canva-image h-52 w-full object-cover" src="https://images.pexels.com/photos/15625985/pexels-photo-15625985.jpeg" alt="Vestidos infantis coloridos em cabides">
+       <div class="p-5">
+        <div class="flex items-start justify-between gap-3">
+         <h3 data-template-id="product-name-005" class="canva-text font-bold" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 19px;">Produto 005 – Vestido Infantil</h3><span id="status-005" class="status available">● DISPONÍVEL</span>
+        </div>
+        <p data-template-id="product-meta-005" class="canva-text mt-2 text-sm text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Código 005 · 8 anos · Ótimo estado</p>
+        <p data-template-id="product-value-005" class="canva-text mt-3 text-sm font-bold" style="color: rgb(239, 107, 46); font-weight: 700; font-style: normal; font-size: 16px;">Troca: 2 produtos de higiene</p><button data-template-id="product-button-005" type="button" class="canva-button mt-5 w-full rounded-xl px-4 py-3 font-bold text-white" style="background: rgb(9, 42, 70); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;" onclick="openProduct('005')">VER PRODUTO</button>
+       </div>
+      </article>
+      <article data-product="006" data-category="accessories" data-template-id="product-card-006" class="canva-card product-card overflow-hidden rounded-2xl shadow-sm" style="background:#ffffff">
+       <img data-template-id="product-image-006" loading="lazy" class="canva-image h-52 w-full object-cover" src="https://images.pexels.com/photos/27204291/pexels-photo-27204291.jpeg" alt="Sandálias bege em fundo neutro">
+       <div class="p-5">
+        <div class="flex items-start justify-between gap-3">
+         <h3 data-template-id="product-name-006" class="canva-text font-bold" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 19px;">Produto 006 – Sandália Bege</h3><span id="status-006" class="status exchanged">● TROCADO</span>
+        </div>
+        <p data-template-id="product-meta-006" class="canva-text mt-2 text-sm text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Código 006 · Tam. 36 · Bom estado</p>
+        <p data-template-id="product-value-006" class="canva-text mt-3 text-sm font-bold" style="color: rgb(239, 107, 46); font-weight: 700; font-style: normal; font-size: 16px;">Troca: 2 alimentos não perecíveis</p><button data-template-id="product-button-006" type="button" class="canva-button mt-5 w-full rounded-xl px-4 py-3 font-bold text-white" style="background: rgb(9, 42, 70); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;" onclick="openProduct('006')">VER PRODUTO</button>
+       </div>
+      </article>
+     </div>
+    </div>
+   </section>
+   <section id="details" class="screen">
+    <div class="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
+     <button type="button" class="mb-7 inline-flex items-center gap-2 text-sm font-bold hover:text-orange-600" onclick="showScreen('catalog')"><i data-lucide="arrow-left" width="18"></i> Voltar ao catálogo</button>
+     <div class="grid gap-8 rounded-[1.5rem] bg-white p-5 shadow-sm md:grid-cols-2 md:p-8">
+      <img id="detail-image" class="h-[340px] w-full rounded-2xl object-cover" alt="">
+      <div>
+       <span id="detail-status" class="status available">● DISPONÍVEL</span>
+       <p id="detail-code" class="mt-5 text-sm font-extrabold tracking-[.14em] text-orange-600"></p>
+       <h2 id="detail-name" class="brand-font mt-2 text-4xl font-bold" style="color:#092a46"></h2>
+       <p id="detail-description" class="mt-4 leading-relaxed text-slate-600"></p>
+       <dl class="mt-6 grid grid-cols-2 gap-4 border-y border-slate-200 py-5 text-sm">
+        <div>
+         <dt class="font-bold text-slate-500">
+          Categoria
+         </dt>
+         <dd id="detail-category" class="mt-1 font-semibold"></dd>
+        </div>
+        <div>
+         <dt class="font-bold text-slate-500">
+          Tamanho
+         </dt>
+         <dd id="detail-size" class="mt-1 font-semibold"></dd>
+        </div>
+        <div>
+         <dt class="font-bold text-slate-500">
+          Conservação
+         </dt>
+         <dd id="detail-condition" class="mt-1 font-semibold"></dd>
+        </div>
+        <div>
+         <dt class="font-bold text-slate-500">
+          Disponibilidade
+         </dt>
+         <dd id="detail-availability" class="mt-1 font-semibold"></dd>
+        </div>
+       </dl>
+       <aside data-template-id="trade-value-box" class="canva-panel mt-6 rounded-2xl p-5" style="background:#fff0e7">
+        <h3 data-template-id="trade-value-title" class="canva-text font-extrabold tracking-wide" style="color: rgb(9, 42, 70); font-weight: 800; font-style: normal; font-size: 19px;">VALOR DA TROCA SOLIDÁRIA</h3>
+        <p id="detail-trade" class="mt-3 text-lg font-bold" style="color:#ef6b2e"></p>
+        <p data-template-id="trade-value-or" class="canva-text my-2 text-sm font-bold text-slate-500" style="color: rgb(100, 116, 139); font-weight: 700; font-style: normal; font-size: 16px;">OU</p>
+        <p data-template-id="trade-value-hygiene" class="canva-text text-lg font-bold" style="color: rgb(239, 107, 46); font-weight: 700; font-style: normal; font-size: 16px;">🧴 2 produtos de higiene pessoal</p>
+       </aside><button id="trade-button" type="button" class="action-button mt-6 w-full rounded-xl px-5 py-4 font-extrabold text-white" style="background:#ef6b2e" onclick="openReservation()"></button>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section id="rules" class="screen">
+    <div class="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6">
+     <button type="button" class="mb-7 inline-flex items-center gap-2 text-sm font-bold hover:text-orange-600" onclick="showScreen('home')"><i data-lucide="arrow-left" width="18"></i> Voltar ao início</button>
+     <article data-template-id="rules-panel" class="canva-panel rounded-[1.5rem] p-6 shadow-sm sm:p-10" style="background:#ffffff">
+      <div class="flex items-start gap-4"><span class="grid h-12 w-12 shrink-0 place-items-center rounded-xl text-white" style="background:#092a46"><i data-lucide="scale"></i></span>
+       <div>
+        <p data-template-id="rules-kicker" class="canva-text text-sm font-extrabold tracking-[.16em]" style="color: rgb(239, 107, 46); font-weight: 800; font-style: normal; font-size: 16px;">TRANSPARÊNCIA E CUIDADO</p>
+        <h2 data-template-id="rules-title" class="canva-text brand-font mt-1 font-bold" style="color: rgb(9, 42, 70); font-weight: 800; font-style: normal; font-size: 24px;">REGRAS DA TROCA SOLIDÁRIA</h2>
+       </div>
+      </div>
+      <ul class="mt-8 space-y-4 text-slate-700">
+       <li class="flex gap-3"><i data-lucide="check-circle-2" class="shrink-0 text-orange-600"></i><span data-template-id="rule-1" class="canva-text" style="color: rgb(51, 78, 104); font-weight: 400; font-style: normal; font-size: 16px;">Os produtos oferecidos no brechó não são vendidos por dinheiro.</span></li>
+       <li class="flex gap-3"><i data-lucide="check-circle-2" class="shrink-0 text-orange-600"></i><span data-template-id="rule-2" class="canva-text" style="color: rgb(51, 78, 104); font-weight: 400; font-style: normal; font-size: 16px;">Cada peça possui um valor de troca solidária indicado na página do produto.</span></li>
+       <li class="flex gap-3"><i data-lucide="check-circle-2" class="shrink-0 text-orange-600"></i><span data-template-id="rule-3" class="canva-text" style="color: rgb(51, 78, 104); font-weight: 400; font-style: normal; font-size: 16px;">Serão aceitos alimentos não perecíveis dentro do prazo de validade.</span></li>
+       <li class="flex gap-3"><i data-lucide="check-circle-2" class="shrink-0 text-orange-600"></i><span data-template-id="rule-4" class="canva-text" style="color: rgb(51, 78, 104); font-weight: 400; font-style: normal; font-size: 16px;">Serão aceitos produtos de higiene pessoal novos e lacrados.</span></li>
+       <li class="flex gap-3"><i data-lucide="check-circle-2" class="shrink-0 text-orange-600"></i><span data-template-id="rule-5" class="canva-text" style="color: rgb(51, 78, 104); font-weight: 400; font-style: normal; font-size: 16px;">A reserva somente será confirmada após análise da equipe.</span></li>
+       <li class="flex gap-3"><i data-lucide="check-circle-2" class="shrink-0 text-orange-600"></i><span data-template-id="rule-6" class="canva-text" style="color: rgb(51, 78, 104); font-weight: 400; font-style: normal; font-size: 16px;">Caso a troca não seja realizada no prazo, a peça voltará ao catálogo.</span></li>
+      </ul><button data-template-id="rules-reservation-button" type="button" class="canva-button action-button mt-9 rounded-xl px-6 py-3 font-bold text-white" style="background: rgb(239, 107, 46); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;" onclick="showScreen('catalog')">CONTINUAR PARA RESERVA</button>
+     </article>
+    </div>
+   </section>
+   <section id="reservation" class="screen">
+    <div class="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">
+     <button type="button" class="mb-7 inline-flex items-center gap-2 text-sm font-bold hover:text-orange-600" onclick="showScreen('details')"><i data-lucide="arrow-left" width="18"></i> Voltar ao produto</button>
+     <form id="reservation-form" class="rounded-[1.5rem] bg-white p-6 shadow-sm sm:p-9">
+      <p data-template-id="reservation-kicker" class="canva-text text-sm font-extrabold tracking-[.16em]" style="color: rgb(239, 107, 46); font-weight: 800; font-style: normal; font-size: 16px;">SOLICITAÇÃO DE RESERVA</p>
+      <h2 data-template-id="reservation-title" class="canva-text brand-font mt-2 font-bold" style="color: rgb(9, 42, 70); font-weight: 800; font-style: normal; font-size: 24px;">Vamos preparar sua troca</h2>
+      <p id="reservation-product-summary" class="mt-3 rounded-xl bg-slate-50 p-3 text-sm font-semibold text-slate-600"></p>
+      <div class="mt-7 grid gap-5 sm:grid-cols-2">
+       <div><label data-template-id="label-full-name" class="canva-text mb-2 block text-sm font-bold" for="full-name" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 16px;">Nome completo</label><input id="full-name" class="field" required="">
+       </div>
+       <div><label data-template-id="label-contact" class="canva-text mb-2 block text-sm font-bold" for="contact" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 16px;">Telefone ou contato</label><input id="contact" class="field" required="">
+       </div>
+       <div><label data-template-id="label-product-code" class="canva-text mb-2 block text-sm font-bold" for="reserve-code" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 16px;">Código do produto</label><input id="reserve-code" class="field bg-slate-100" readonly="">
+       </div>
+       <div><label data-template-id="label-product-name" class="canva-text mb-2 block text-sm font-bold" for="reserve-name" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 16px;">Nome do produto</label><input id="reserve-name" class="field bg-slate-100" readonly="">
+       </div>
+      </div>
+      <fieldset class="mt-6"><legend data-template-id="label-donation-type" class="canva-text mb-3 block text-sm font-bold" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 16px;">O que você pretende entregar na troca?</legend>
+       <div class="grid gap-3 sm:grid-cols-2">
+        <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 p-4"><input type="radio" name="donation-type" value="Alimento não perecível" checked=""><span class="font-semibold">🥫 Alimento não perecível</span></label> <label class="flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 p-4"><input type="radio" name="donation-type" value="Produto de higiene pessoal"><span class="font-semibold">🧴 Produto de higiene pessoal</span></label>
+       </div>
+      </fieldset>
+      <div class="mt-5 grid gap-5 sm:grid-cols-[1fr_150px]">
+       <div><label data-template-id="label-donation-item" class="canva-text mb-2 block text-sm font-bold" for="donation-item" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 16px;">Informe qual produto será doado</label><input id="donation-item" class="field" required="">
+       </div>
+       <div><label data-template-id="label-quantity" class="canva-text mb-2 block text-sm font-bold" for="donation-quantity" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 16px;">Quantidade</label><input id="donation-quantity" type="number" min="1" class="field" required="">
+       </div>
+      </div><label class="mt-6 flex items-start gap-3 rounded-xl p-4" style="background:#fff7f1"><input id="aware-check" type="checkbox" class="mt-1" required=""><span data-template-id="reservation-awareness" class="canva-text text-sm leading-relaxed text-slate-700" style="color: rgb(51, 78, 104); font-weight: 400; font-style: normal; font-size: 16px;">Estou ciente de que esta solicitação representa uma reserva e que a troca somente será concluída após confirmação da equipe.</span></label>
+      <p id="reservation-message" class="mt-4 text-sm font-semibold" aria-live="polite"></p><button data-template-id="reservation-submit-button" id="reservation-submit" type="submit" class="canva-button action-button mt-5 w-full rounded-xl px-6 py-4 font-extrabold text-white" style="background: rgb(239, 107, 46); color: rgb(255, 255, 255); font-weight: 800; font-style: normal; font-size: 16px;">SOLICITAR RESERVA</button>
+     </form>
+    </div>
+   </section>
+   <section id="confirmation" class="screen">
+    <div class="mx-auto w-full max-w-2xl px-4 py-14 text-center sm:px-6">
+     <div class="rounded-[1.8rem] bg-white p-8 shadow-sm sm:p-12">
+      <span class="mx-auto grid h-16 w-16 place-items-center rounded-full text-white" style="background:#174d37"><i data-lucide="heart-handshake" width="31"></i></span>
+      <h2 data-template-id="confirmation-title" class="canva-text brand-font mt-6 font-bold" style="color: rgb(9, 42, 70); font-weight: 800; font-style: normal; font-size: 24px;">RESERVA SOLICITADA!</h2>
+      <p data-template-id="confirmation-message" class="canva-text mx-auto mt-4 max-w-lg leading-relaxed text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Obrigado por participar do Brechó Solidário Online. Sua solicitação foi registrada e será analisada pela nossa equipe.</p>
+      <div id="confirmation-product" class="mt-7 rounded-2xl p-5 text-left" style="background:#fff0e7"></div>
+      <div class="mt-7 flex flex-wrap justify-center gap-3">
+       <button data-template-id="confirmation-catalog-button" type="button" class="canva-button rounded-xl px-5 py-3 font-bold text-white" style="background: rgb(9, 42, 70); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;" onclick="showScreen('catalog')">VOLTAR AO CATÁLOGO</button> <button data-template-id="confirmation-feedback-button" type="button" class="canva-button rounded-xl px-5 py-3 font-bold" style="color: rgb(239, 107, 46); background: rgb(255, 240, 231); font-weight: 700; font-style: normal; font-size: 16px;" onclick="showScreen('feedback')">IR PARA PÓS-VENDA</button>
+      </div>
+     </div>
+    </div>
+   </section>
+   <section id="feedback" class="screen">
+    <div class="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">
+     <form id="feedback-form" class="rounded-[1.5rem] bg-white p-6 shadow-sm sm:p-9">
+      <p data-template-id="feedback-kicker" class="canva-text text-sm font-extrabold tracking-[.16em]" style="color: rgb(239, 107, 46); font-weight: 800; font-style: normal; font-size: 16px;">PÓS-VENDA</p>
+      <h2 data-template-id="feedback-title" class="canva-text brand-font mt-2 font-bold" style="color: rgb(9, 42, 70); font-weight: 800; font-style: normal; font-size: 24px;">CONTE PARA A GENTE COMO FOI SUA EXPERIÊNCIA</h2>
+      <p data-template-id="feedback-description" class="canva-text mt-3 text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Sua opinião ajuda a tornar esta experiência ainda mais acolhedora e sustentável.</p>
+      <div class="mt-7 space-y-6">
+       <fieldset><legend data-template-id="feedback-rating-label" class="canva-text mb-3 block font-bold" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 16px;">Como você avalia o atendimento?</legend>
+        <div class="flex gap-2"><label class="cursor-pointer"><input class="peer sr-only" type="radio" name="rating" value="1" required=""><span class="block rounded-lg border px-4 py-3 font-bold peer-checked:border-orange-500 peer-checked:bg-orange-50">1 ★</span></label><label class="cursor-pointer"><input class="peer sr-only" type="radio" name="rating" value="2"><span class="block rounded-lg border px-4 py-3 font-bold peer-checked:border-orange-500 peer-checked:bg-orange-50">2 ★</span></label><label class="cursor-pointer"><input class="peer sr-only" type="radio" name="rating" value="3"><span class="block rounded-lg border px-4 py-3 font-bold peer-checked:border-orange-500 peer-checked:bg-orange-50">3 ★</span></label><label class="cursor-pointer"><input class="peer sr-only" type="radio" name="rating" value="4"><span class="block rounded-lg border px-4 py-3 font-bold peer-checked:border-orange-500 peer-checked:bg-orange-50">4 ★</span></label><label class="cursor-pointer"><input class="peer sr-only" type="radio" name="rating" value="5"><span class="block rounded-lg border px-4 py-3 font-bold peer-checked:border-orange-500 peer-checked:bg-orange-50">5 ★</span></label>
+        </div>
+       </fieldset>
+       <div><label data-template-id="feedback-ease-label" class="canva-text mb-2 block font-bold" for="ease" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 16px;">Foi fácil utilizar o Brechó Solidário Online?</label><select id="ease" class="field" required=""><option value="">Selecione uma opção</option><option>Muito fácil</option><option>Fácil</option><option>Regular</option><option>Difícil</option></select>
+       </div>
+       <div><label data-template-id="feedback-satisfaction-label" class="canva-text mb-2 block font-bold" for="satisfaction" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 16px;">Você ficou satisfeito com o produto recebido?</label><select id="satisfaction" class="field" required=""><option value="">Selecione uma opção</option><option>Sim</option><option>Parcialmente</option><option>Não</option></select>
+       </div>
+       <div><label data-template-id="feedback-again-label" class="canva-text mb-2 block font-bold" for="again" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 16px;">Você participaria novamente?</label><select id="again" class="field" required=""><option value="">Selecione uma opção</option><option>Sim</option><option>Talvez</option><option>Não</option></select>
+       </div>
+       <div><label data-template-id="feedback-recommend-label" class="canva-text mb-2 block font-bold" for="recommend" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 16px;">Você indicaria o Brechó Solidário para outras pessoas?</label><select id="recommend" class="field" required=""><option value="">Selecione uma opção</option><option>Sim</option><option>Não</option></select>
+       </div>
+       <div><label data-template-id="feedback-suggestion-label" class="canva-text mb-2 block font-bold" for="suggestion" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 16px;">Deixe sua sugestão</label><textarea id="suggestion" class="field min-h-28" placeholder="Escreva aqui sua sugestão"></textarea>
+       </div>
+      </div>
+      <p id="feedback-message" class="mt-4 font-bold" aria-live="polite"></p><button data-template-id="feedback-submit-button" id="feedback-submit" type="submit" class="canva-button action-button mt-5 w-full rounded-xl px-6 py-4 font-extrabold text-white" style="background: rgb(239, 107, 46); color: rgb(255, 255, 255); font-weight: 800; font-style: normal; font-size: 16px;">ENVIAR AVALIAÇÃO</button>
+     </form>
+    </div>
+   </section>
+   <section id="adm" class="screen">
+    <div class="mx-auto w-full max-w-xl px-4 py-14 sm:px-6">
+     <div class="rounded-[1.5rem] bg-white p-6 shadow-sm sm:p-9">
+      <p data-template-id="adm-kicker" class="canva-text text-sm font-extrabold tracking-[.16em]" style="color: rgb(239, 107, 46); font-weight: 800; font-style: normal; font-size: 16px;">ÁREA RESTRITA</p>
+      <h2 data-template-id="adm-title" class="canva-text brand-font mt-2 font-bold" style="color: rgb(9, 42, 70); font-weight: 800; font-style: normal; font-size: 24px;">Acesso da equipe</h2>
+      <p data-template-id="adm-description" class="canva-text mt-3 text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Digite o código de acesso da equipe para abrir pedidos e controle de vendas.</p>
+      <form id="adm-form" class="mt-7">
+       <label data-template-id="adm-code-label" class="canva-text mb-2 block text-sm font-bold" for="adm-code" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 16px;">Código de acesso</label> <input id="adm-code" type="password" class="field" autocomplete="off" required="">
+       <p id="adm-message" class="mt-3 text-sm font-semibold" aria-live="polite"></p><button data-template-id="adm-submit-button" type="submit" class="canva-button action-button mt-5 w-full rounded-xl px-6 py-4 font-extrabold text-white" style="background: rgb(239, 107, 46); color: rgb(255, 255, 255); font-weight: 800; font-style: normal; font-size: 16px;">ENTRAR NA ADM</button>
+      </form>
+     </div>
+    </div>
+   </section>
+   <section id="management" class="screen">
+
+    <div class="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6">
+
+        <!-- CABEÇALHO DO ADM -->
+        <div class="max-w-2xl">
+            <p class="text-sm font-extrabold tracking-[.16em]" style="color:#ef6b2e">
+                PAINEL ADMINISTRATIVO
+            </p>
+
+            <h2 class="brand-font mt-2 text-3xl font-bold" style="color:#092a46">
+                Gestão do Brechó
+            </h2>
+
+            <p class="mt-3 text-slate-600">
+                Gerencie produtos, acompanhe reservas e consulte o retorno dos clientes.
+            </p>
+        </div>
+
+        <!-- NAVEGAÇÃO DO ADM -->
+        <div class="mt-8 flex flex-wrap gap-3 border-b border-slate-200 pb-4">
+
+            <button
+                type="button"
+                class="admin-tab-btn rounded-xl px-4 py-2 font-bold"
+                data-admin-tab="products"
+                
+            >
+                Produtos
+            </button>
+
+            <button
+                type="button"
+                class="admin-tab-btn rounded-xl px-4 py-2 font-bold"
+                data-admin-tab="reservations"
+            >
+                Reservas
+            </button>
+
+            <button
+                type="button"
+                class="admin-tab-btn rounded-xl px-4 py-2 font-bold"
+                data-admin-tab="feedback"
+            >
+                Pós-venda
+            </button>
+
+        </div>
+
+        <!-- PRODUTOS -->
+        <section
+            id="admin-products-section"
+            class="admin-section mt-8"
+            data-admin-section="products"
+        >
+
+            <div class="flex flex-wrap items-end justify-between gap-4">
+
+                <div>
+                    <p class="text-sm font-extrabold tracking-[.16em]" style="color:#ef6b2e">
+                        CATÁLOGO
+                    </p>
+
+                    <h3 class="brand-font mt-2 text-2xl font-bold" style="color:#092a46">
+                        Produtos
+                    </h3>
+
+                    <p class="mt-2 text-slate-600">
+                        Adicione, edite, exclua ou altere o status dos produtos do brechó.
+                    </p>
+                </div>
+
+                <button
+                    type="button"
+                    id="admin-add-product-btn"
+                    class="rounded-xl px-5 py-3 font-bold text-white"
+                    style="background:#ef6b2e"
+                >
+                    + Adicionar produto
+                </button>
+
+            </div>
+
+            <div
+                id="admin-product-list"
+                class="mt-6 grid gap-4"
+            ></div>
+
+            <!-- FORMULÁRIO -->
+            <div
+                id="admin-product-form-container"
+                class="mt-8 hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
+            >
+
+                <div class="flex items-center justify-between gap-4">
+
+                    <div>
+                        <p
+                            class="text-sm font-extrabold tracking-[.16em]"
+                            style="color:#ef6b2e"
+                        >
+                            PRODUTO
+                        </p>
+
+                        <h4
+                            id="admin-product-form-title"
+                            class="brand-font mt-1 text-xl font-bold"
+                            style="color:#092a46"
+                        >
+                            Adicionar produto
+                        </h4>
+                    </div>
+
+                    <button
+                        type="button"
+                        id="admin-product-cancel-btn"
+                        class="rounded-lg px-3 py-2 font-bold text-slate-600"
+                    >
+                        Cancelar
+                    </button>
+
+                </div>
+
+                <form
+                    id="admin-product-form"
+                    class="mt-6 grid gap-5 sm:grid-cols-2"
+                >
+
+                    <input
+                        type="hidden"
+                        id="admin-product-id"
+                    >
+
+                    <div>
+                        <label
+                            for="admin-product-code"
+                            class="block text-sm font-bold text-slate-700"
+                        >
+                            Código
+                        </label>
+
+                        <input
+                            id="admin-product-code"
+                            name="codigo"
+                            type="text"
+                            required
+                            class="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none"
+                            placeholder="Ex.: 007"
+                        >
+                    </div>
+
+                    <div>
+                        <label
+                            for="admin-product-name"
+                            class="block text-sm font-bold text-slate-700"
+                        >
+                            Nome do produto
+                        </label>
+
+                        <input
+                            id="admin-product-name"
+                            name="nome"
+                            type="text"
+                            required
+                            class="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none"
+                            placeholder="Ex.: Camisa Social"
+                        >
+                    </div>
+
+                    <div>
+                        <label
+                            for="admin-product-category"
+                            class="block text-sm font-bold text-slate-700"
+                        >
+                            Categoria
+                        </label>
+
+                        <select
+                            id="admin-product-category"
+                            name="categoria"
+                            required
+                            class="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none"
+                        >
+                            <option value="">Selecione</option>
+                            <option value="adult">Vestuário Adulto</option>
+                            <option value="children">Vestuário Infantil</option>
+                            <option value="shoes">Calçados e Acessórios</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label
+                            for="admin-product-size"
+                            class="block text-sm font-bold text-slate-700"
+                        >
+                            Tamanho
+                        </label>
+
+                        <input
+                            id="admin-product-size"
+                            name="tamanho"
+                            type="text"
+                            required
+                            class="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none"
+                            placeholder="Ex.: M"
+                        >
+                    </div>
+
+                    <div>
+                        <label
+                            for="admin-product-condition"
+                            class="block text-sm font-bold text-slate-700"
+                        >
+                            Estado de conservação
+                        </label>
+
+                        <input
+                            id="admin-product-condition"
+                            name="estado"
+                            type="text"
+                            required
+                            class="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none"
+                            placeholder="Ex.: Ótimo estado"
+                        >
+                    </div>
+
+                    <div>
+                        <label
+                            for="admin-product-status"
+                            class="block text-sm font-bold text-slate-700"
+                        >
+                            Status
+                        </label>
+
+                        <select
+                            id="admin-product-status"
+                            name="status"
+                            required
+                            class="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none"
+                        >
+                            <option value="available">Disponível</option>
+                            <option value="reserved">Reservado</option>
+                            <option value="exchanged">Trocado</option>
+                        </select>
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <label
+                            for="admin-product-exchange"
+                            class="block text-sm font-bold text-slate-700"
+                        >
+                            Valor da troca solidária
+                        </label>
+
+                        <input
+                            id="admin-product-exchange"
+                            name="troca"
+                            type="text"
+                            required
+                            class="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none"
+                            placeholder="Ex.: 2 kg de arroz"
+                        >
+                    </div>
+
+                    <div class="sm:col-span-2">
+                        <label
+                            for="admin-product-description"
+                            class="block text-sm font-bold text-slate-700"
+                        >
+                            Descrição
+                        </label>
+
+                        <textarea
+                            id="admin-product-description"
+                            name="descricao"
+                            rows="4"
+                            required
+                            class="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 outline-none"
+                            placeholder="Descreva o produto..."
+                        ></textarea>
+                    </div>
+
+                    <div class="flex flex-wrap gap-3 sm:col-span-2">
+
+                        <button
+                            type="submit"
+                            id="admin-product-save-btn"
+                            class="rounded-xl px-5 py-3 font-bold text-white"
+                            style="background:#ef6b2e"
+                        >
+                            Salvar produto
+                        </button>
+
+                        <button
+                            type="button"
+                            id="admin-product-cancel-btn-bottom"
+                            class="rounded-xl border border-slate-300 px-5 py-3 font-bold text-slate-700"
+                        >
+                            Cancelar
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </section>
+
+        <!-- RESERVAS -->
+        <section
+            id="admin-reservations-section"
+            class="admin-section mt-8"
+            data-admin-section="reservations"
+            hidden
+        >
+
+            <div class="max-w-2xl">
+
+                <p
+                    class="text-sm font-extrabold tracking-[.16em]"
+                    style="color:#ef6b2e"
+                >
+                    GESTÃO DE RESERVAS
+                </p>
+
+                <h3
+                    class="brand-font mt-2 text-2xl font-bold"
+                    style="color:#092a46"
+                >
+                    Acompanhe os pedidos de troca
+                </h3>
+
+                <p class="mt-3 text-slate-600">
+                    Confirme reservas, marque pedidos em análise ou atualize uma peça como vendida.
+                </p>
+
+            </div>
+
+            <div
+                id="reservation-list"
+                class="mt-8 grid gap-4"
+            ></div>
+
+        </section>
+
+        <!-- PÓS-VENDA -->
+        <section
+            id="admin-feedback-section"
+            class="admin-section mt-12"
+            data-admin-section="feedback"
+            hidden
+            aria-labelledby="admin-feedback-title"
+        >
+
+            <p
+                class="text-sm font-extrabold tracking-[.16em]"
+                style="color:#ef6b2e"
+            >
+                RETORNO DOS CLIENTES
+            </p>
+
+            <h3
+                id="admin-feedback-title"
+                class="brand-font mt-2 text-2xl font-bold"
+                style="color:#092a46"
+            >
+                Avaliações de pós-venda
+            </h3>
+
+            <p class="mt-2 text-slate-600">
+                Consulte as notas, respostas e sugestões enviadas pelos clientes após a troca.
+            </p>
+
+            <div
+                id="feedback-list"
+                class="mt-6 grid gap-4"
+            ></div>
+
+        </section>
+
+        <p
+            id="management-message"
+            class="mt-5 font-bold"
+            aria-live="polite"
+        ></p>
+
+    </div>
+
+
+  </main>
+  <footer class="mt-10 border-t border-slate-200 bg-white">
+   <div class="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-6 text-sm text-slate-500 sm:px-6">
+    <span>Brechó Solidário Online · Consumo consciente em movimento.</span> <span class="font-semibold text-slate-600">Escolha. Troque. Faça o bem.</span>
+   </div>
+  </footer>
+  <script src="app.js"></script>
+
+ 
+</body></html>
