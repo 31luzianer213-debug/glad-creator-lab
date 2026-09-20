@@ -29,6 +29,13 @@
       "when": 1789930896002,
       "tag": "0003_ajustar_check_categoria",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1789930954738,
+      "tag": "0004_restringir_execucao_funcoes",
+      "breakpoints": true
     }
   ]
 }
