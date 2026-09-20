@@ -2039,3 +2039,10 @@ footer span:last-child {
         flex: none;
     }
 }
+
+/* Destaque da categoria escolhida no catálogo */
+#catalog .category-card.active {
+    border: 2px solid var(--orange);
+    box-shadow: 0 10px 24px rgba(239, 107, 46, .18);
+    transform: translateY(-2px);
+}
