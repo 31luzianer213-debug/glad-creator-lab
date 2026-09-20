@@ -1072,7 +1072,9 @@ function renderFeedback() {
 
     if (!list) return;
 
-    if (!avaliacoes.length) {
+    const listaAvaliacoes = garantirLista(avaliacoes);
+
+    if (!listaAvaliacoes.length) {
         list.innerHTML =
             `
             <div class="rounded-xl bg-slate-50 p-4 text-sm text-slate-600">
@@ -1084,7 +1086,7 @@ function renderFeedback() {
     }
 
     list.innerHTML =
-        avaliacoes
+        listaAvaliacoes
             .map((avaliacao) => {
                 const nota =
                     Number(
