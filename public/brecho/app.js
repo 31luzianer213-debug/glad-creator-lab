@@ -349,26 +349,26 @@ function criarCardProduto(produto) {
 
         <div class="p-5">
             <p class="text-xs font-extrabold uppercase tracking-wider text-orange-600">
-                Código ${produto.code}
+                Código ${escaparHTML(produto.code)}
             </p>
 
             <h3 class="mt-1 text-lg font-extrabold text-slate-800">
-                ${produto.name}
+                ${escaparHTML(produto.name)}
             </h3>
 
             <p class="mt-2 text-sm text-slate-500">
-                ${categoriaProdutoAdmin(produto.category)}
+                ${escaparHTML(categoriaProdutoAdmin(produto.category))}
             </p>
 
             <div class="mt-3 space-y-1 text-sm text-slate-600">
                 <p>
                     <strong>Tamanho:</strong>
-                    ${produto.size}
+                    ${escaparHTML(produto.size)}
                 </p>
 
                 <p>
                     <strong>Conservação:</strong>
-                    ${produto.condition}
+                    ${escaparHTML(produto.condition)}
                 </p>
             </div>
 
