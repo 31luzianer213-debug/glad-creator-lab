@@ -1403,9 +1403,11 @@ function renderAdminProducts() {
                                     produto.image
                                         ? `
                                             <img
-                                                src="${produto.image}"
-                                                alt="${produto.name}"
-                                                class="h-24 w-24 rounded-xl object-cover"
+                                                src="${escaparHTML(produto.image)}"
+                                                alt="${escaparHTML(produto.name)}"
+                                                class="h-24 w-24 rounded-xl bg-slate-100 object-cover"
+                                                loading="lazy"
+                                                onerror="this.remove()"
                                             >
                                         `
                                         : `
