@@ -1,4 +1,128 @@
-const API_URL = "https://brecho-api-zebo.onrender.com/api";
+// ========================================
+// CONEXAO COM O BANCO (LOVABLE CLOUD)
+// ========================================
+
+const SUPABASE_URL = "https://wwdrvysclsmxsldybafu.supabase.co";
+const SUPABASE_KEY = "sb_publishable_9WYUQNJKGCjXwyYKpexOfg_P_NdGbKX";
+
+const sb = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY,
+    { auth: { persistSession: true, autoRefreshToken: true } }
+);
+
+function comId(registro) {
+    return registro
+        ? Object.assign({}, registro, { _id: registro.id })
+        : registro;
+}
+
+function respostaApi(ok, corpo, status) {
+    return {
+        ok: ok,
+        status: status || (ok ? 200 : 400),
+        json: async () => corpo
+    };
+}
+
+async function apiBrecho(caminho, opcoes) {
+    opcoes = opcoes || {};
+
+    const metodo = (opcoes.method || "GET").toUpperCase();
+    const partes = String(caminho).split("/").filter(Boolean);
+    const tabela = partes[0];
+    const id = partes[1];
+    const corpo = opcoes.body ? JSON.parse(opcoes.body) : null;
+
+    try {
+        if (metodo === "GET") {
+            const { data, error } = await sb
+                .from(tabela)
+                .select("*")
+                .order("createdAt", { ascending: false });
+
+            if (error) throw error;
+
+            return respostaApi(true, (data || []).map(comId));
+        }
+
+        if (metodo === "POST") {
+            if (tabela === "reservas") {
+                const { error } = await sb.from(tabela).insert(corpo);
+
+                if (error) throw error;
+
+                return respostaApi(true, comId(Object.assign({ id: "" }, corpo)));
+            }
+
+            const { data, error } = await sb
+                .from(tabela)
+                .insert(corpo)
+                .select()
+                .single();
+
+            if (error) throw error;
+
+            return respostaApi(true, comId(data));
+        }
+
+        if (metodo === "PUT" || metodo === "PATCH") {
+            const { data, error } = await sb
+                .from(tabela)
+                .update(corpo)
+                .eq("id", id)
+                .select()
+                .single();
+
+            if (error) throw error;
+
+            return respostaApi(true, comId(data));
+        }
+
+        if (metodo === "DELETE") {
+            const { error } = await sb.from(tabela).delete().eq("id", id);
+
+            if (error) throw error;
+
+            return respostaApi(true, {});
+        }
+
+        return respostaApi(false, { erro: "Operação não suportada." });
+    } catch (erro) {
+        console.error("Erro no banco:", erro);
+
+        let mensagem = erro?.message || "Erro ao acessar os dados.";
+
+        if (String(erro?.code) === "23505") {
+            mensagem = "Já existe um produto com esse código.";
+        }
+
+        if (String(mensagem).toLowerCase().includes("row-level security")) {
+            mensagem = "Você precisa estar logado como equipe para fazer isso.";
+        }
+
+        return respostaApi(false, { erro: mensagem });
+    }
+}
+
+async function verificarAdmin() {
+    const { data: sessao } = await sb.auth.getSession();
+
+    if (!sessao || !sessao.session) {
+        admUnlocked = false;
+        return false;
+    }
+
+    const { data, error } = await sb
+        .from("user_roles")
+        .select("role")
+        .eq("role", "admin")
+        .limit(1);
+
+    admUnlocked = !error && Array.isArray(data) && data.length > 0;
+
+    return admUnlocked;
+}
 // ========================================
 // ESTADO DO SITE
 // ========================================
@@ -8,7 +132,6 @@ let currentProduct = null;
 let reservas = [];
 let avaliacoes = [];
 
-const ADM_CODE = "537586";
 let admUnlocked = false;
 
 // ========================================
@@ -112,17 +235,13 @@ function transformarProduto(produto) {
         status: produto.status,
         description: produto.descricao,
         trade: produto.troca,
-        image: (produto.imagem
-            ? (String(produto.imagem).startsWith("/")
-                ? API_URL.replace(/\/api$/, "") + produto.imagem
-                : produto.imagem)
-            : productImages[produto.codigo]) || ""
+        image: (produto.imagem || productImages[produto.codigo]) || ""
     };
 }
 
 async function carregarProdutos() {
     try {
-        const resposta = await fetch(`${API_URL}/produtos`);
+        const resposta = await apiBrecho(`/produtos`);
 
         if (!resposta.ok) {
             throw new Error("Erro ao buscar produtos.");
@@ -714,9 +833,14 @@ function openReservation() {
 // ========================================
 
 async function carregarReservas() {
+    if (!admUnlocked) {
+        reservas = [];
+        return;
+    }
+
     try {
         const resposta =
-            await fetch(`${API_URL}/reservas`);
+            await apiBrecho(`/reservas`);
 
         if (!resposta.ok) {
             throw new Error(
@@ -815,8 +939,7 @@ async function criarReserva() {
     };
 
     const resposta =
-        await fetch(
-            `${API_URL}/reservas`,
+        await apiBrecho(`/reservas`,
             {
                 method: "POST",
 
@@ -853,8 +976,7 @@ async function criarReserva() {
 async function carregarAvaliacoes() {
     try {
         const resposta =
-            await fetch(
-                `${API_URL}/avaliacoes`
+            await apiBrecho(`/avaliacoes`
             );
 
         if (!resposta.ok) {
@@ -1167,8 +1289,7 @@ async function updateReservation(id, status) {
         }
 
         const resposta =
-            await fetch(
-                `${API_URL}/reservas/${id}`,
+            await apiBrecho(`/reservas/${id}`,
                 {
                     method: "PUT",
 
@@ -1290,8 +1411,7 @@ async function excluirReserva(id) {
 
     try {
         const resposta =
-            await fetch(
-                `${API_URL}/reservas/${id}`,
+            await apiBrecho(`/reservas/${id}`,
                 {
                     method: "DELETE"
                 }
@@ -1564,6 +1684,10 @@ function abrirFormularioProduto(produto = null) {
         document.getElementById(
             "admin-product-description"
         ).value = produto.description;
+
+        document.getElementById(
+            "admin-product-image"
+        ).value = produto.image || "";
     } else {
         title.textContent =
             "Adicionar produto";
@@ -1651,8 +1775,7 @@ async function excluirProduto(id) {
 
     try {
         const resposta =
-            await fetch(
-                `${API_URL}/produtos/${id}`,
+            await apiBrecho(`/produtos/${id}`,
                 {
                     method: "DELETE"
                 }
@@ -1731,8 +1854,7 @@ async function alternarStatusProduto(id) {
 
     try {
         const resposta =
-            await fetch(
-                `${API_URL}/produtos/${id}`,
+            await apiBrecho(`/produtos/${id}`,
                 {
                     method: "PUT",
 
@@ -1846,7 +1968,12 @@ async function salvarProdutoAdmin(event) {
         descricao:
             document.getElementById(
                 "admin-product-description"
-            )?.value.trim()
+            )?.value.trim(),
+
+        imagem:
+            document.getElementById(
+                "admin-product-image"
+            )?.value.trim() || ""
     };
 
     const message =
@@ -2073,62 +2200,126 @@ function configurarAbasADM() {
 // LOGIN ADM
 // ========================================
 
-function configurarADM() {
-    const form =
-        document.getElementById(
-            "adm-form"
+async function abrirAreaDaEquipe() {
+    showScreen("management");
+    abrirAbaADM("products");
+
+    await carregarProdutos();
+    await carregarReservas();
+    await carregarAvaliacoes();
+}
+
+function mensagemADM(texto, cor) {
+    const message = document.getElementById("adm-message");
+
+    if (!message) return;
+
+    message.style.color = cor || "";
+    message.textContent = texto;
+}
+
+function traduzirErroLogin(erro) {
+    const texto = String(erro?.message || "").toLowerCase();
+
+    if (texto.includes("invalid login")) {
+        return "E-mail ou senha incorretos.";
+    }
+
+    if (texto.includes("already registered")) {
+        return "Este e-mail já tem acesso criado. Use a opção de entrar.";
+    }
+
+    if (texto.includes("password")) {
+        return "A senha precisa ter pelo menos 6 caracteres.";
+    }
+
+    return "Não foi possível concluir. Tente novamente.";
+}
+
+async function acessarADM(criarConta) {
+    const email =
+        document.getElementById("adm-email")?.value.trim();
+
+    const senha =
+        document.getElementById("adm-password")?.value;
+
+    if (!email || !senha) {
+        mensagemADM("Informe e-mail e senha.", "#b23b16");
+        return;
+    }
+
+    mensagemADM(criarConta ? "Criando acesso..." : "Entrando...");
+
+    const { data, error } = criarConta
+        ? await sb.auth.signUp({
+            email: email,
+            password: senha,
+            options: { emailRedirectTo: window.location.href }
+        })
+        : await sb.auth.signInWithPassword({
+            email: email,
+            password: senha
+        });
+
+    if (error) {
+        mensagemADM(traduzirErroLogin(error), "#b23b16");
+        return;
+    }
+
+    if (!data || !data.session) {
+        mensagemADM(
+            "Enviamos um e-mail de confirmação. Confirme o cadastro e volte para entrar.",
+            "#a84912"
         );
+        return;
+    }
 
-    if (!form) return;
+    await sb.rpc("reivindicar_admin");
 
-    form.addEventListener(
-        "submit",
-        function (event) {
+    if (await verificarAdmin()) {
+        mensagemADM("Acesso liberado. Área da equipe aberta.", "#19723a");
+        await abrirAreaDaEquipe();
+    } else {
+        mensagemADM(
+            "Esta conta ainda não tem permissão de equipe. Peça a liberação a um administrador.",
+            "#b23b16"
+        );
+    }
+}
+
+async function sairDaADM() {
+    await sb.auth.signOut();
+
+    admUnlocked = false;
+    reservas = [];
+
+    mensagemADM("Você saiu da área da equipe.", "#19723a");
+    showScreen("adm");
+}
+
+function configurarADM() {
+    const form = document.getElementById("adm-form");
+
+    const signupButton =
+        document.getElementById("adm-signup-btn");
+
+    const logoutButton =
+        document.getElementById("adm-logout-btn");
+
+    if (signupButton) {
+        signupButton.addEventListener("click", () => acessarADM(true));
+    }
+
+    if (logoutButton) {
+        logoutButton.addEventListener("click", sairDaADM);
+    }
+
+    if (form) {
+        form.addEventListener("submit", (event) => {
             event.preventDefault();
-
-            const message =
-                document.getElementById(
-                    "adm-message"
-                );
-
-            const codigo =
-                document.getElementById(
-                    "adm-code"
-                )?.value;
-
-            if (codigo === ADM_CODE) {
-                admUnlocked = true;
-
-                if (message) {
-                    message.style.color =
-                        "#19723a";
-
-                    message.textContent =
-                        "Acesso liberado. Área da equipe aberta.";
-                }
-
-                showScreen(
-                    "management"
-                );
-
-                abrirAbaADM(
-                    "products"
-                );
-
-                carregarProdutos();
-                carregarReservas();
-                carregarAvaliacoes();
-            } else {
-                if (message) {
-                    message.style.color =
-                        "#b23b16";
-
-                    message.textContent =
-                        "Código incorreto. Tente novamente.";
-                }
-            }
-        }
-    );
+            acessarADM(false);
+        });
+    }
 }
 
 // ========================================
@@ -2338,8 +2529,7 @@ function configurarAvaliacao() {
                 };
 
                 const resposta =
-                    await fetch(
-                        `${API_URL}/avaliacoes`,
+                    await apiBrecho(`/avaliacoes`,
                         {
                             method: "POST",
 
@@ -2421,6 +2611,7 @@ function configurarAvaliacao() {
 
 async function inicializarSistema() {
     try {
+        await verificarAdmin();
         await carregarProdutos();
         await carregarReservas();
         await carregarAvaliacoes();
