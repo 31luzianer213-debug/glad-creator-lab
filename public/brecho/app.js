@@ -92,6 +92,15 @@ function closeMenu() {
 // PRODUTOS
 // ========================================
 
+function escaparHTML(valor) {
+    return String(valor ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
 function transformarProduto(produto) {
     return {
         id: produto._id,
@@ -137,6 +146,22 @@ async function carregarProdutos() {
         console.log("Produtos carregados:", products);
     } catch (erro) {
         console.error("Erro ao carregar produtos:", erro);
+
+        const grid = document.getElementById("product-grid");
+
+        if (grid && !Object.keys(products).length) {
+            grid.innerHTML = `
+                <div class="col-span-full rounded-2xl border border-orange-200 bg-orange-50 p-8 text-center">
+                    <p class="font-bold text-slate-700">
+                        Não foi possível carregar os produtos agora.
+                    </p>
+
+                    <p class="mt-1 text-sm text-slate-600">
+                        Verifique sua conexão e tente novamente em instantes.
+                    </p>
+                </div>
+            `;
+        }
     }
 }
 
@@ -267,19 +292,36 @@ function criarCardProduto(produto) {
     card.className =
         "group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg";
 
+    const semImagemHTML = `
+        <div class="text-center">
+            <p class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+                Sem imagem
+            </p>
+
+            <p class="mt-1 text-sm text-slate-500">
+                Produto ${escaparHTML(produto.code)}
+            </p>
+        </div>
+    `;
+
     const imagemHTML = produto.image
         ? `
             <div class="relative aspect-[4/3] overflow-hidden bg-slate-100">
+                <div class="absolute inset-0 flex items-center justify-center">
+                    ${semImagemHTML}
+                </div>
+
                 <img
-                    src="${produto.image}"
-                    alt="${produto.name}"
-                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    src="${escaparHTML(produto.image)}"
+                    alt="${escaparHTML(produto.name)}"
+                    class="relative h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
+                    onerror="this.remove()"
                 >
 
                 <span
-                    id="status-${produto.code}"
-                    class="status ${produto.status} absolute right-3 top-3"
+                    id="status-${escaparHTML(produto.code)}"
+                    class="status ${escaparHTML(produto.status)} absolute right-3 top-3"
                 >
                     ${statusText(produto.status)}
                 </span>
@@ -287,19 +329,11 @@ function criarCardProduto(produto) {
         `
         : `
             <div class="relative flex aspect-[4/3] items-center justify-center bg-slate-100">
-                <div class="text-center">
-                    <p class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
-                        Sem imagem
-                    </p>
-
-                    <p class="mt-1 text-sm text-slate-500">
-                        Produto ${produto.code}
-                    </p>
-                </div>
+                ${semImagemHTML}
 
                 <span
-                    id="status-${produto.code}"
-                    class="status ${produto.status} absolute right-3 top-3"
+                    id="status-${escaparHTML(produto.code)}"
+                    class="status ${escaparHTML(produto.status)} absolute right-3 top-3"
                 >
                     ${statusText(produto.status)}
                 </span>
@@ -315,26 +349,26 @@ function criarCardProduto(produto) {
 
         <div class="p-5">
             <p class="text-xs font-extrabold uppercase tracking-wider text-orange-600">
-                Código ${produto.code}
+                Código ${escaparHTML(produto.code)}
             </p>
 
             <h3 class="mt-1 text-lg font-extrabold text-slate-800">
-                ${produto.name}
+                ${escaparHTML(produto.name)}
             </h3>
 
             <p class="mt-2 text-sm text-slate-500">
-                ${categoriaProdutoAdmin(produto.category)}
+                ${escaparHTML(categoriaProdutoAdmin(produto.category))}
             </p>
 
             <div class="mt-3 space-y-1 text-sm text-slate-600">
                 <p>
                     <strong>Tamanho:</strong>
-                    ${produto.size}
+                    ${escaparHTML(produto.size)}
                 </p>
 
                 <p>
                     <strong>Conservação:</strong>
-                    ${produto.condition}
+                    ${escaparHTML(produto.condition)}
                 </p>
             </div>
 
@@ -344,14 +378,14 @@ function criarCardProduto(produto) {
                 </p>
 
                 <p class="mt-1 font-bold text-slate-700">
-                    ${troca}
+                    ${escaparHTML(troca)}
                 </p>
             </div>
 
             <button
                 type="button"
                 class="mt-5 w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-extrabold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-50"
-                onclick="openProduct('${produto.code}')"
+                onclick="openProduct('${escaparHTML(produto.code)}')"
             >
                 VER PRODUTO
             </button>
@@ -579,13 +613,18 @@ function openProduct(code) {
         document.getElementById("detail-image");
 
     if (image) {
+        image.onerror = () => {
+            image.style.display = "none";
+        };
+
         if (product.image) {
             image.src = product.image;
-            image.alt = product.name;
+            image.alt = product.name || "Imagem do produto";
             image.style.display = "";
         } else {
             image.removeAttribute("src");
             image.alt = "Imagem não cadastrada";
+            image.style.display = "none";
         }
     }
 
@@ -1369,9 +1408,11 @@ function renderAdminProducts() {
                                     produto.image
                                         ? `
                                             <img
-                                                src="${produto.image}"
-                                                alt="${produto.name}"
-                                                class="h-24 w-24 rounded-xl object-cover"
+                                                src="${escaparHTML(produto.image)}"
+                                                alt="${escaparHTML(produto.name)}"
+                                                class="h-24 w-24 rounded-xl bg-slate-100 object-cover"
+                                                loading="lazy"
+                                                onerror="this.remove()"
                                             >
                                         `
                                         : `

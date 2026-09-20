@@ -27,7 +27,7 @@ function Index() {
     <iframe
       src="/brecho/index.html"
       title="Brechó Solidário Online"
-      className="h-screen w-screen border-0"
+      className="block h-dvh w-full border-0"
     />
   );
 }
