@@ -292,19 +292,36 @@ function criarCardProduto(produto) {
     card.className =
         "group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg";
 
+    const semImagemHTML = `
+        <div class="text-center">
+            <p class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+                Sem imagem
+            </p>
+
+            <p class="mt-1 text-sm text-slate-500">
+                Produto ${escaparHTML(produto.code)}
+            </p>
+        </div>
+    `;
+
     const imagemHTML = produto.image
         ? `
             <div class="relative aspect-[4/3] overflow-hidden bg-slate-100">
+                <div class="absolute inset-0 flex items-center justify-center">
+                    ${semImagemHTML}
+                </div>
+
                 <img
-                    src="${produto.image}"
-                    alt="${produto.name}"
-                    class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    src="${escaparHTML(produto.image)}"
+                    alt="${escaparHTML(produto.name)}"
+                    class="relative h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
+                    onerror="this.remove()"
                 >
 
                 <span
-                    id="status-${produto.code}"
-                    class="status ${produto.status} absolute right-3 top-3"
+                    id="status-${escaparHTML(produto.code)}"
+                    class="status ${escaparHTML(produto.status)} absolute right-3 top-3"
                 >
                     ${statusText(produto.status)}
                 </span>
@@ -312,19 +329,11 @@ function criarCardProduto(produto) {
         `
         : `
             <div class="relative flex aspect-[4/3] items-center justify-center bg-slate-100">
-                <div class="text-center">
-                    <p class="text-xs font-extrabold uppercase tracking-wider text-slate-400">
-                        Sem imagem
-                    </p>
-
-                    <p class="mt-1 text-sm text-slate-500">
-                        Produto ${produto.code}
-                    </p>
-                </div>
+                ${semImagemHTML}
 
                 <span
-                    id="status-${produto.code}"
-                    class="status ${produto.status} absolute right-3 top-3"
+                    id="status-${escaparHTML(produto.code)}"
+                    class="status ${escaparHTML(produto.status)} absolute right-3 top-3"
                 >
                     ${statusText(produto.status)}
                 </span>
