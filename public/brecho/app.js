@@ -92,6 +92,15 @@ function closeMenu() {
 // PRODUTOS
 // ========================================
 
+function escaparHTML(valor) {
+    return String(valor ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
 function transformarProduto(produto) {
     return {
         id: produto._id,
