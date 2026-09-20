@@ -1791,7 +1791,7 @@ footer span:last-child {
     }
 
     header nav > button:first-child span:last-child {
-        display: none;
+        font-size: 0.75rem;
     }
 
     .mobile-toggle {
