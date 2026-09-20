@@ -146,6 +146,22 @@ async function carregarProdutos() {
         console.log("Produtos carregados:", products);
     } catch (erro) {
         console.error("Erro ao carregar produtos:", erro);
+
+        const grid = document.getElementById("product-grid");
+
+        if (grid && !Object.keys(products).length) {
+            grid.innerHTML = `
+                <div class="col-span-full rounded-2xl border border-orange-200 bg-orange-50 p-8 text-center">
+                    <p class="font-bold text-slate-700">
+                        Não foi possível carregar os produtos agora.
+                    </p>
+
+                    <p class="mt-1 text-sm text-slate-600">
+                        Verifique sua conexão e tente novamente em instantes.
+                    </p>
+                </div>
+            `;
+        }
     }
 }
 
