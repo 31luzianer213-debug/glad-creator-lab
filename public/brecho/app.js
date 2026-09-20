@@ -1200,7 +1200,9 @@ function renderReservations() {
 
     if (!list) return;
 
-    if (!reservas.length) {
+    const listaReservas = garantirLista(reservas);
+
+    if (!listaReservas.length) {
         list.innerHTML =
             `
             <div class="rounded-xl bg-slate-50 p-4 text-sm text-slate-600">
@@ -1212,7 +1214,7 @@ function renderReservations() {
     }
 
     list.innerHTML =
-        reservas
+        listaReservas
             .map((reserva) => {
                 const status =
                     reserva.status ||
