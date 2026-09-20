@@ -15,6 +15,13 @@
       "when": 1789930576304,
       "tag": "0001_claim_first_admin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789930846430,
+      "tag": "0002_hardening_seguranca_banco",
+      "breakpoints": true
     }
   ]
 }
