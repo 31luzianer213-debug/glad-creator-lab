@@ -25,6 +25,32 @@ function respostaApi(ok, corpo, status) {
     };
 }
 
+const TABELAS_PERMITIDAS = ["produtos", "reservas", "avaliacoes"];
+const LIMITE_LEITURA = 500;
+const UUID_REGEX =
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+// Limpa e limita o que o visitante digita antes de enviar ao banco
+function limparEnvio(corpo) {
+    if (!corpo || typeof corpo !== "object") return corpo;
+
+    const limpo = {};
+
+    Object.keys(corpo).forEach((chave) => {
+        const valor = corpo[chave];
+
+        if (typeof valor === "string") {
+            limpo[chave] = valor.trim().slice(0, 1000);
+        } else if (typeof valor === "number") {
+            limpo[chave] = Number.isFinite(valor) ? valor : 0;
+        } else {
+            limpo[chave] = valor;
+        }
+    });
+
+    return limpo;
+}
+
 async function apiBrecho(caminho, opcoes) {
     opcoes = opcoes || {};
 
@@ -32,14 +58,23 @@ async function apiBrecho(caminho, opcoes) {
     const partes = String(caminho).split("/").filter(Boolean);
     const tabela = partes[0];
     const id = partes[1];
-    const corpo = opcoes.body ? JSON.parse(opcoes.body) : null;
+    const corpo = opcoes.body ? limparEnvio(JSON.parse(opcoes.body)) : null;
+
+    if (!TABELAS_PERMITIDAS.includes(tabela)) {
+        return respostaApi(false, { erro: "Operação não permitida." });
+    }
+
+    if (id !== undefined && !UUID_REGEX.test(String(id))) {
+        return respostaApi(false, { erro: "Registro inválido." });
+    }
 
     try {
         if (metodo === "GET") {
             const { data, error } = await sb
                 .from(tabela)
                 .select("*")
-                .order("createdAt", { ascending: false });
+                .order("createdAt", { ascending: false })
+                .limit(LIMITE_LEITURA);
 
             if (error) throw error;
 
