@@ -663,7 +663,40 @@ function filterCategory(category) {
         button.classList.toggle("active", ativo);
     });
 
+    mostrarAvisoDeFiltroVazio();
+
     showScreen("catalog");
+}
+
+// Avisa quando a categoria escolhida não tem nenhuma peça no momento
+function mostrarAvisoDeFiltroVazio() {
+    const grid = document.getElementById("product-grid");
+
+    if (!grid) return;
+
+    const visiveis = Array.from(
+        grid.querySelectorAll("[data-product]")
+    ).filter((card) => !card.classList.contains("hidden-by-filter"));
+
+    let aviso = document.getElementById("catalog-empty-filter");
+
+    if (visiveis.length) {
+        if (aviso) aviso.remove();
+        return;
+    }
+
+    if (!grid.querySelector("[data-product]")) return;
+
+    if (!aviso) {
+        aviso = document.createElement("div");
+        aviso.id = "catalog-empty-filter";
+        aviso.className =
+            "col-span-full rounded-2xl border border-slate-200 bg-white p-8 text-center";
+        aviso.innerHTML =
+            '<p class="font-bold text-slate-700">Nenhuma peça nesta categoria por enquanto.</p>' +
+            '<p class="mt-1 text-sm text-slate-600">Escolha outra categoria ou toque em “Todos”.</p>';
+        grid.appendChild(aviso);
+    }
 }
 
 // ========================================
