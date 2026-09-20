@@ -2709,3 +2709,66 @@ document.addEventListener(
         inicializarSistema();
     }
 );
+// ========================================
+// REDE DE SEGURANÇA DE TELA (ERROR BOUNDARY)
+// Se algo quebrar durante a montagem da página,
+// mostramos um aviso amigável com opção de tentar de novo.
+// ========================================
+
+function mostrarAvisoDeFalha() {
+    if (document.getElementById("app-error-boundary")) return;
+
+    const aviso = document.createElement("div");
+    aviso.id = "app-error-boundary";
+    aviso.setAttribute("role", "alert");
+    aviso.style.cssText =
+        "position:fixed;left:0;right:0;bottom:0;z-index:9999;margin:0 auto;" +
+        "max-width:36rem;padding:1rem 1.25rem;background:#fff7ed;" +
+        "border:1px solid #fdba74;border-radius:1rem 1rem 0 0;" +
+        "box-shadow:0 -6px 20px rgba(15,23,42,.12);font-family:inherit;color:#334155";
+
+    aviso.innerHTML =
+        '<p style="font-weight:700;color:#0f172a;margin:0">Algo não carregou como esperado.</p>' +
+        '<p style="margin:.25rem 0 .75rem;font-size:.875rem">Suas informações estão salvas. Você pode tentar novamente.</p>' +
+        '<div style="display:flex;gap:.5rem;flex-wrap:wrap">' +
+        '<button type="button" id="app-error-retry" style="min-height:44px;padding:.5rem 1rem;border:0;border-radius:.75rem;background:#f97316;color:#fff;font-weight:700;cursor:pointer">Tentar novamente</button>' +
+        '<button type="button" id="app-error-dismiss" style="min-height:44px;padding:.5rem 1rem;border:1px solid #cbd5e1;border-radius:.75rem;background:#fff;color:#334155;cursor:pointer">Continuar mesmo assim</button>' +
+        "</div>";
+
+    document.body.appendChild(aviso);
+
+    const botaoTentar = document.getElementById("app-error-retry");
+    const botaoFechar = document.getElementById("app-error-dismiss");
+
+    if (botaoTentar) {
+        botaoTentar.addEventListener("click", async () => {
+            botaoTentar.disabled = true;
+            botaoTentar.textContent = "Carregando...";
+
+            try {
+                await carregarProdutos();
+                await carregarReservas();
+                await carregarAvaliacoes();
+                aviso.remove();
+            } catch (erro) {
+                console.error("Nova tentativa falhou:", erro);
+                botaoTentar.disabled = false;
+                botaoTentar.textContent = "Tentar novamente";
+            }
+        });
+    }
+
+    if (botaoFechar) {
+        botaoFechar.addEventListener("click", () => aviso.remove());
+    }
+}
+
+window.addEventListener("error", (evento) => {
+    console.error("Falha de renderização:", evento.error || evento.message);
+    mostrarAvisoDeFalha();
+});
+
+window.addEventListener("unhandledrejection", (evento) => {
+    console.error("Falha não tratada:", evento.reason);
+    mostrarAvisoDeFalha();
+});
