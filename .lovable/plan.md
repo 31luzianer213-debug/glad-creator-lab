@@ -1,77 +1,105 @@
-# Plano completo para lançar o Brechó Solidário
+# Plano completo para lançar e comercializar o Brechó Solidário
 
-Resultado da revisão: o site funciona, mas tem **problemas que impedem um lançamento sério**. Eles estão ordenados por gravidade. Cada fase pode ser aprovada separadamente.
+Esta revisão combinou leitura do código, auditoria automática do banco e testes no navegador. Tudo abaixo foi observado no site atual, não é suposição. São 8 fases, em ordem de prioridade, e cada uma pode ser aprovada separadamente.
 
-## Diagnóstico (o que está errado hoje)
+## Diagnóstico
 
-**Bloqueadores (graves)**
-1. **Duas pessoas podem reservar a mesma peça.** A peça só vira "Reservada" na tela de quem reservou; no banco ela continua disponível.
-2. **Qualquer pessoa pode lotar o banco com reservas e avaliações falsas.** Não há limite de envios nem proteção contra robôs.
-3. **Falta aviso de privacidade (LGPD).** O site coleta nome e telefone sem explicar o uso, sem pedir consentimento e sem oferecer forma de pedir exclusão dos dados.
-4. **O site inteiro roda dentro de uma "moldura" (iframe).** O Google não enxerga as peças, links diretos para uma peça não funcionam, o botão voltar do celular sai do site e o título da aba às vezes mostra "Lovable App".
-5. **O visual depende de uma versão de teste do Tailwind carregada da internet.** Ela é lenta, mostra aviso no console e não é recomendada para produção. O supabase-js e os ícones também vêm de sites externos.
+### Bloqueadores (não dá para lançar assim)
+1. **Reserva dupla:** a peça só vira "Reservada" na tela de quem reservou; no banco continua "Disponível" e outra pessoa pode reservá-la.
+2. **Spam sem limite:** qualquer um pode enviar milhares de reservas e avaliações falsas. Não há limite por contato nem proteção contra robôs.
+3. **LGPD:** o site coleta nome e telefone sem política de privacidade, sem consentimento e sem forma de pedir exclusão dos dados.
+4. **Site dentro de uma "moldura":** o Google só enxerga uma página vazia. Não existe link próprio por peça, o voltar do celular sai do site e o endereço nunca muda.
+5. **Tailwind de teste em produção:** o console avisa que "cdn.tailwindcss.com should not be used in production". Ele gera o visual no aparelho de cada visitante, o que deixa o site lento e piscando.
+6. **5 arquivos vêm de sites externos** (Tailwind, supabase-js, ícones, fontes, foto da capa). Se algum desses sites cair, o site quebra.
+7. **Banco:** 4 avisos de segurança sobre funções internas que visitantes conseguem chamar.
 
-**Importantes**
-6. Não há páginas de Termos de uso, Política de privacidade, Contato, Sobre nós nem de erro 404.
-7. Não existe forma de contato (WhatsApp, Instagram, endereço, horário de retirada).
-8. Não há ícone do site (favicon próprio), imagem de compartilhamento por peça nem mapa do site para o Google.
-9. As fotos não são otimizadas (tamanho original), o que deixa o celular lento.
-10. O painel não tem histórico, ações em lote, recuperação de senha nem segundo usuário.
-11. Não há medição de visitas nem de peças mais vistas.
-12. O banco apontou 4 avisos de segurança: funções internas que qualquer pessoa pode chamar (precisam ser revisadas e restritas).
+### Graves
+8. Sem página 404 própria dentro do site, sem arquivo de robôs e sem mapa do site.
+9. Sem favicon próprio, sem manifesto de app e sem endereço oficial (canonical) informado ao Google.
+10. O rodapé não tem nenhum contato: WhatsApp, Instagram, endereço ou horário.
+11. 104 estilos escritos direto nos elementos e 81 marcações de um editor antigo ("data-template-id"), o que torna manutenção e ajustes lentos.
+12. Emojis usados como ícones (🥫🧴) aparecem como quadrados em alguns aparelhos (visto no teste do computador).
+13. O texto "OU 2 produtos de higiene pessoal" é fixo e aparece em toda peça, mesmo que a troca seja outra.
+14. A imagem principal da página da peça não tem descrição para leitores de tela quando a peça não tem foto.
+15. Painel: sem recuperação de senha, sem histórico, sem ações em lote e sem segundo usuário.
+16. Fotos no tamanho original (vários MB) deixam o celular lento e gastam dados.
+17. Nenhuma medição: você não sabe quantas pessoas visitam nem quais peças atraem mais.
 
-## Fase 1 — Segurança e reservas (obrigatório antes de publicar)
-- Reservar trava a peça no banco. Se a peça já estiver reservada, a reserva é recusada com uma mensagem clara. Cancelar libera a peça, e concluir marca como "Trocada".
-- Limite de envios: no máximo 3 reservas e 3 avaliações por contato por dia, e contato validado (telefone BR ou e-mail).
-- Campo "anti-robô" invisível nos formulários.
-- Revisar as 4 funções apontadas pelo banco e deixar públicas só as necessárias.
-- Recuperação de senha no painel e sessão que expira por inatividade.
+### Melhorias de produto (para vender e crescer)
+18. Não há como a pessoa ser avisada quando chegar uma peça do tamanho dela.
+19. Sem página "Sobre", sem prova social (depoimentos e números de impacto) e sem perguntas frequentes.
+20. Sem suporte a vários pontos de coleta ou eventos (feiras).
+21. Sem modelo para outras organizações usarem (se a ideia for comercializar o sistema).
 
-## Fase 2 — Reestruturação técnica (desempenho, Google, links)
-- Tirar o site da "moldura": transformar as telas em páginas reais (Início, Catálogo, Peça, Reserva, Acompanhar, Regras, Como funciona, Pós-venda, Equipe), cada uma com endereço próprio (ex.: `/peca/007`).
-- Botão voltar do celular, links diretos e compartilhamento funcionando.
-- Visual e textos idênticos aos de hoje, só que sem a versão de teste do Tailwind e sem arquivos de sites externos.
-- Título, descrição e imagem próprios em cada página, com a foto da peça ao compartilhar no WhatsApp.
-- Mapa do site, arquivo de robôs e dados estruturados de produto para o Google.
+## Fase 1 — Segurança e reservas (obrigatória)
+- Travar a peça no banco na hora da reserva, com trava contra duas reservas simultâneas. Cancelar libera a peça; concluir marca como "Trocada".
+- Recusar reserva de peça indisponível, com mensagem clara ao visitante.
+- Limite: 3 reservas e 3 avaliações por contato a cada 24 h. Telefone BR ou e-mail validado.
+- Campo "anti-robô" invisível e tempo mínimo de preenchimento do formulário.
+- Restringir as 4 funções apontadas pelo banco.
+- Painel: recuperação de senha, saída automática após 30 min parado e confirmação antes de excluir.
 
-## Fase 3 — Confiança e LGPD
-- Páginas: Sobre o projeto, Contato, Política de privacidade, Termos de uso, Perguntas frequentes e página 404 amigável.
-- Caixa de consentimento no formulário de reserva e aviso de cookies simples.
-- Botão "Pedir exclusão dos meus dados" (vira um pedido no painel).
-- Exclusão automática dos dados pessoais de reservas encerradas há mais de 6 meses.
-- Rodapé completo: contato, WhatsApp, Instagram, endereço e horário de retirada.
+## Fase 2 — Reconstrução técnica (velocidade, Google, links)
+- Tirar da "moldura": cada tela vira uma página real com endereço próprio: `/`, `/catalogo`, `/peca/007`, `/reservar/007`, `/minha-reserva`, `/regras`, `/como-funciona`, `/pos-venda`, `/equipe`.
+- Visual idêntico ao atual, mas compilado (sem o Tailwind de teste) e com todos os arquivos servidos pelo próprio site.
+- Ícones e fontes locais, e emojis trocados por ícones de verdade.
+- Carregamento do catálogo no servidor: a página já chega pronta, sem piscar.
+- Título, descrição e foto de compartilhamento próprios por página e por peça.
+- Arquivo de robôs, mapa do site automático com todas as peças, dados de produto para o Google e endereço oficial por página.
+- Página 404 com busca e atalho para o catálogo.
+
+## Fase 3 — Confiança, LGPD e institucional
+- Páginas: Sobre o projeto, Contato, Perguntas frequentes, Política de privacidade e Termos de uso.
+- Consentimento obrigatório na reserva e aviso de cookies.
+- "Pedir exclusão dos meus dados" pelo código da reserva, virando um pedido no painel.
+- Apagamento automático dos dados pessoais de reservas encerradas há mais de 6 meses.
+- Rodapé completo: WhatsApp, Instagram, endereço, horário de retirada e responsável.
+- Botão flutuante de WhatsApp da equipe.
 
 ## Fase 4 — Experiência do visitante
-- Vitrine "Chegaram agora" na página inicial e contadores de impacto públicos ("X peças já trocadas").
-- Filtros por tamanho e estado de conservação, e botão "Carregar mais" para catálogos grandes.
-- Várias fotos por peça, com galeria e ampliação, e "Você também pode gostar".
-- Fotos otimizadas automaticamente no envio (redimensionadas e comprimidas no aparelho).
-- Botão flutuante de WhatsApp da equipe.
-- Instalável como aplicativo no celular (ícone na tela inicial).
+- Página inicial: "Chegaram agora" (4 peças), números de impacto ao vivo e depoimentos das avaliações 5 estrelas (só com consentimento).
+- Catálogo: filtros por tamanho, conservação e tipo de troca; "Carregar mais"; lembrar o filtro ao voltar.
+- Peça: até 5 fotos com galeria e ampliação, texto de troca real (sem "OU" fixo) e "Você também pode gostar".
+- "Me avise quando chegar": a pessoa deixa o contato e o tamanho e é avisada quando entrar uma peça compatível (depende da Fase 7).
+- Instalável como aplicativo no celular, com ícone próprio e funcionamento básico sem internet.
+- Acessibilidade: navegação por teclado, contraste revisado, textos alternativos e foco visível.
 
 ## Fase 5 — Painel da equipe profissional
-- Histórico de alterações por peça e reserva.
-- Ações em lote e busca avançada.
-- Segundo cargo "equipe", com acesso só às reservas.
-- Painel de relatórios: peças mais vistas, trocas por mês e doações por tipo, com exportação em PDF/planilha.
-- Envio de várias fotos com reordenação.
-- Tela de pedidos de exclusão de dados (LGPD).
+- Histórico de alterações (quem, quando, o quê) por peça e por reserva.
+- Ações em lote, busca avançada e filtros salvos.
+- Cargos: Administradora (tudo) e Equipe (só reservas), com convite por e-mail.
+- Fotos: várias por peça, compressão automática, reordenação e remoção.
+- Relatórios: trocas por mês, doações por tipo, peças mais vistas e tempo médio até a troca; exportação em planilha e PDF.
+- Tela de pedidos LGPD e lista de interessados ("me avise").
+- Impressão de etiquetas com código e QR code da peça para colar na roupa física.
 
-## Fase 6 — Comunicação e crescimento
-- E-mail automático de confirmação e de mudança de situação da reserva (precisa de um domínio de e-mail).
-- Medição de visitas sem cookies de terceiros.
-- Domínio próprio (ex.: brechosolidario.com.br) e checklist final de publicação.
+## Fase 6 — Medição e crescimento
+- Contador de visitas e visualizações por peça, sem cookies de terceiros.
+- Funil: visitou → abriu peça → reservou → concluiu.
+- Links rastreáveis para Instagram e WhatsApp (saber de onde vêm as reservas).
+
+## Fase 7 — Comunicação automática
+- E-mail de confirmação da reserva e de cada mudança de situação.
+- E-mail "chegou uma peça do seu tamanho".
+- Resumo diário para a equipe com as reservas pendentes.
+- Requer: um domínio de e-mail configurado.
+
+## Fase 8 — Lançamento e comercialização
+- Domínio próprio (ex.: brechosolidario.com.br) e cadastro no Google Search Console.
+- Checklist final: velocidade medida, teste em 3 celulares, revisão de textos e backup.
+- Se a ideia for vender o sistema para outras ONGs ou brechós: nome, cores e textos configuráveis pelo painel, várias organizações no mesmo sistema e página de apresentação do produto com planos. Isso é uma fase grande à parte e precisa de decisão sua.
 
 ## Detalhes técnicos
-- F1: gatilhos `BEFORE INSERT` em `reservas` (bloqueia se `produtos.status <> 'available'`, com trava via `SELECT ... FOR UPDATE`) e `AFTER UPDATE` (Cancelada → available, Vendido → exchanged). Gatilho de limite diário por `contato`. Revogar `EXECUTE` de `has_role`/`reivindicar_admin` onde não for necessário, mantendo só `consultar_reserva` pública.
-- F2: migrar `public/brecho/*` para rotas TanStack (`src/routes/*.tsx`) com Tailwind v4 do projeto, cliente Supabase gerado, `head()` por rota e `/peca/$codigo` com loader público. O estilo atual será portado para tokens em `src/styles.css`.
-- F3: tabelas `pedidos_exclusao` e job agendado de limpeza, ambos com GRANT e RLS.
-- F4: compressão via canvas no navegador antes do upload, e `produtos.imagens text[]`.
-- F5: enum `app_role` + `equipe`, tabela `historico` alimentada por gatilhos, políticas separadas por cargo.
-- F6: domínio de e-mail do Lovable Cloud e filas de envio.
+- F1: gatilho `BEFORE INSERT` em `reservas` com `SELECT ... FOR UPDATE` em `produtos` (rejeita se `status <> 'available'`, depois marca `reserved`); `AFTER UPDATE` (Cancelada → available, Vendido → exchanged); limite por `contato` em janela de 24 h via gatilho; `REVOKE EXECUTE` de `has_role`/`reivindicar_admin` para anon; `consultar_reserva` continua pública.
+- F2: portar `public/brecho/*` para rotas TanStack (`src/routes/*.tsx`), componentes React, Tailwind v4 com tokens em `src/styles.css`, cliente Supabase gerado, loaders públicos com `ensureQueryData`, `head()` por rota, `/peca/$codigo` com og:image da peça, `sitemap.xml` como rota de servidor, `lucide-react` e fontes via `<link>` no `__root`. `/equipe` vira rota com login próprio. Os arquivos antigos saem só após a validação.
+- F3: tabelas `pedidos_exclusao` e `consentimentos` (GRANT + RLS) e limpeza agendada (pg_cron).
+- F4: `produtos.imagens text[]` (backfill de `imagem`), `interesses` (contato, tamanho, categoria), manifest + service worker simples.
+- F5: `app_role` + `equipe`, tabela `historico` alimentada por gatilhos, políticas separadas por cargo, `visualizacoes` agregadas por dia.
+- F7: domínio de e-mail do Lovable Cloud e filas de envio.
 
 ## Precisa de você
-- Dados reais para Contato/Sobre: WhatsApp, Instagram, endereço, horário de retirada e nome da organização responsável (para a política de privacidade).
-- E-mail da segunda pessoa da equipe (Fase 5).
-- Se já tem um domínio próprio (Fase 6).
-- Por qual fase começar. Minha recomendação: Fase 1 e depois Fase 2.
+- **Contato real:** WhatsApp, Instagram, endereço, horário de retirada e nome da organização responsável (para a política de privacidade).
+- **Objetivo comercial:** é um brechó próprio para divulgar, ou um sistema para vender a outras organizações? (muda a Fase 8)
+- **E-mail da segunda pessoa da equipe** (Fase 5).
+- **Domínio próprio:** já tem um? (Fases 7 e 8)
+- **Ordem:** recomendo Fase 1 → Fase 2 → Fase 3 antes de divulgar.
