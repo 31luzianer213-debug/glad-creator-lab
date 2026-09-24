@@ -210,6 +210,7 @@ async function carregarTudo() {
     renderProdutos();
     renderReservas();
     renderAvaliacoes();
+    carregarExtras().catch((e) => console.error(e));
 }
 
 async function abrirPainel() {
