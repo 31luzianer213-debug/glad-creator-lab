@@ -15,6 +15,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800&amp;family=Fraunces:opsz,wght@9..144,700;9..144,800&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="efeitos.css">
   <style>
     :root {
       --navy: #092a46;
@@ -70,9 +71,9 @@
    <nav class="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-3 sm:px-6" aria-label="Navegação principal">
     <button type="button" class="flex items-center gap-3 text-left" onclick="showScreen('home')"> <span class="grid h-10 w-10 place-items-center rounded-xl text-white" style="background:#092a46"><i data-lucide="recycle" width="21"></i></span> <span> <strong class="block text-sm leading-tight" style="color:#092a46">BRECHÓ</strong> <span class="block text-xs font-semibold text-orange-600">SOLIDÁRIO</span> </span> </button>
     <div class="desktop-links flex items-center gap-1 text-sm font-semibold">
-     <button type="button" class="nav-link rounded-lg px-3 py-2" data-nav-screen="home" onclick="showScreen('home')">Início</button> <button type="button" class="nav-link rounded-lg px-3 py-2" data-nav-screen="catalog" onclick="showScreen('catalog')">Catálogo</button> <button type="button" class="nav-link rounded-lg px-3 py-2" data-nav-screen="how" onclick="showScreen('how')">Como funciona</button> <button type="button" class="nav-link rounded-lg px-3 py-2" data-nav-screen="rules" onclick="showScreen('rules')">Regras</button> <button type="button" class="nav-link rounded-lg px-3 py-2" data-nav-screen="feedback" onclick="showScreen('feedback')">Pós-venda</button> </div><button type="button" class="mobile-toggle rounded-lg p-2 text-slate-700" aria-label="Abrir menu" aria-expanded="false" onclick="toggleMenu(this)"> <i data-lucide="menu"></i> </button>
+     <button type="button" class="nav-link rounded-lg px-3 py-2" data-nav-screen="home" onclick="showScreen('home')">Início</button> <button type="button" class="nav-link rounded-lg px-3 py-2" data-nav-screen="catalog" onclick="showScreen('catalog')">Catálogo</button> <button type="button" class="nav-link rounded-lg px-3 py-2" data-nav-screen="how" onclick="showScreen('how')">Como funciona</button> <button type="button" class="nav-link rounded-lg px-3 py-2" data-nav-screen="rules" onclick="showScreen('rules')">Regras</button> <button type="button" class="nav-link rounded-lg px-3 py-2" data-nav-screen="track" onclick="showScreen('track')">Minha reserva</button> <button type="button" class="nav-link rounded-lg px-3 py-2" data-nav-screen="feedback" onclick="showScreen('feedback')">Pós-venda</button> </div><button type="button" class="mobile-toggle rounded-lg p-2 text-slate-700" aria-label="Abrir menu" aria-expanded="false" onclick="toggleMenu(this)"> <i data-lucide="menu"></i> </button>
     <div id="mobile-menu" class="mobile-menu">
-     <button type="button" class="nav-link rounded-lg px-3 py-2 text-left font-semibold" data-nav-screen="home" onclick="showScreen('home'); closeMenu()">Início</button> <button type="button" class="nav-link rounded-lg px-3 py-2 text-left font-semibold" data-nav-screen="catalog" onclick="showScreen('catalog'); closeMenu()">Catálogo</button> <button type="button" class="nav-link rounded-lg px-3 py-2 text-left font-semibold" data-nav-screen="how" onclick="showScreen('how'); closeMenu()">Como funciona</button> <button type="button" class="nav-link rounded-lg px-3 py-2 text-left font-semibold" data-nav-screen="rules" onclick="showScreen('rules'); closeMenu()">Regras</button> <button type="button" class="nav-link rounded-lg px-3 py-2 text-left font-semibold" data-nav-screen="feedback" onclick="showScreen('feedback'); closeMenu()">Pós-venda</button> </div>
+     <button type="button" class="nav-link rounded-lg px-3 py-2 text-left font-semibold" data-nav-screen="home" onclick="showScreen('home'); closeMenu()">Início</button> <button type="button" class="nav-link rounded-lg px-3 py-2 text-left font-semibold" data-nav-screen="catalog" onclick="showScreen('catalog'); closeMenu()">Catálogo</button> <button type="button" class="nav-link rounded-lg px-3 py-2 text-left font-semibold" data-nav-screen="how" onclick="showScreen('how'); closeMenu()">Como funciona</button> <button type="button" class="nav-link rounded-lg px-3 py-2 text-left font-semibold" data-nav-screen="rules" onclick="showScreen('rules'); closeMenu()">Regras</button> <button type="button" class="nav-link rounded-lg px-3 py-2 text-left font-semibold" data-nav-screen="track" onclick="showScreen('track'); closeMenu()">Minha reserva</button> <button type="button" class="nav-link rounded-lg px-3 py-2 text-left font-semibold" data-nav-screen="feedback" onclick="showScreen('feedback'); closeMenu()">Pós-venda</button> </div>
    </nav>
   </header>
   <main>
@@ -152,71 +153,16 @@
      </div>
      <div class="mt-10 flex flex-wrap items-center justify-between gap-3">
       <h3 data-template-id="products-heading" class="canva-text font-bold" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 22px;">Produtos disponíveis</h3>
-      <div class="flex gap-2">
-       <button type="button" class="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold" data-category-filter="all" onclick="filterCategory('all')">Todos</button> <button type="button" class="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold" data-category-filter="available" onclick="filterCategory('available')">Disponíveis</button>
+      <div class="flex flex-wrap gap-2">
+       <button type="button" id="catalog-favorites" class="filter-chip rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold" aria-pressed="false"><i data-lucide="heart" width="16"></i> Favoritos <span id="favorites-count" class="fav-count"></span></button> <button type="button" class="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold" data-category-filter="all" onclick="filterCategory('all')">Todos</button> <button type="button" class="rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold" data-category-filter="available" onclick="filterCategory('available')">Disponíveis</button>
       </div>
      </div>
-     <div id="product-grid" class="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      <article data-product="001" data-category="adult" data-template-id="product-card-001" class="canva-card product-card overflow-hidden rounded-2xl shadow-sm" style="background:#ffffff">
-       <img data-template-id="product-image-001" loading="lazy" class="canva-image h-52 w-full object-cover" src="https://images.pexels.com/photos/4440566/pexels-photo-4440566.jpeg" alt="Camisetas coloridas dobradas">
-       <div class="p-5">
-        <div class="flex items-start justify-between gap-3">
-         <h3 data-template-id="product-name-001" class="canva-text font-bold" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 19px;">Produto 001 – Camiseta Azul</h3><span id="status-001" class="status available">● DISPONÍVEL</span>
-        </div>
-        <p data-template-id="product-meta-001" class="canva-text mt-2 text-sm text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Código 001 · Tam. M · Ótimo estado</p>
-        <p data-template-id="product-value-001" class="canva-text mt-3 text-sm font-bold" style="color: rgb(239, 107, 46); font-weight: 700; font-style: normal; font-size: 16px;">Troca: 2 alimentos não perecíveis</p><button data-template-id="product-button-001" type="button" class="canva-button mt-5 w-full rounded-xl px-4 py-3 font-bold text-white" style="background: rgb(9, 42, 70); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;" onclick="openProduct('001')">VER PRODUTO</button>
-       </div>
-      </article>
-      <article data-product="002" data-category="adult" data-template-id="product-card-002" class="canva-card product-card overflow-hidden rounded-2xl shadow-sm" style="background:#ffffff">
-       <img data-template-id="product-image-002" loading="lazy" class="canva-image h-52 w-full object-cover" src="https://images.pexels.com/photos/1082529/pexels-photo-1082529.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" alt="Três calças jeans dobradas">
-       <div class="p-5">
-        <div class="flex items-start justify-between gap-3">
-         <h3 data-template-id="product-name-002" class="canva-text font-bold" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 19px;">Produto 002 – Calça Jeans</h3><span id="status-002" class="status available">● DISPONÍVEL</span>
-        </div>
-        <p data-template-id="product-meta-002" class="canva-text mt-2 text-sm text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Código 002 · Tam. 40 · Muito bom</p>
-        <p data-template-id="product-value-002" class="canva-text mt-3 text-sm font-bold" style="color: rgb(239, 107, 46); font-weight: 700; font-style: normal; font-size: 16px;">Troca: 3 alimentos não perecíveis</p><button data-template-id="product-button-002" type="button" class="canva-button mt-5 w-full rounded-xl px-4 py-3 font-bold text-white" style="background: rgb(9, 42, 70); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;" onclick="openProduct('002')">VER PRODUTO</button>
-       </div>
-      </article>
-      <article data-product="003" data-category="accessories" data-template-id="product-card-003" class="canva-card product-card overflow-hidden rounded-2xl shadow-sm" style="background:#ffffff">
-       <img data-template-id="product-image-003" loading="lazy" class="canva-image h-52 w-full object-cover" src="https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" alt="Tênis modernos coloridos">
-       <div class="p-5">
-        <div class="flex items-start justify-between gap-3">
-         <h3 data-template-id="product-name-003" class="canva-text font-bold" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 19px;">Produto 003 – Tênis Urbano</h3><span id="status-003" class="status reserved">● RESERVADO</span>
-        </div>
-        <p data-template-id="product-meta-003" class="canva-text mt-2 text-sm text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Código 003 · Tam. 38 · Muito bom</p>
-        <p data-template-id="product-value-003" class="canva-text mt-3 text-sm font-bold" style="color: rgb(239, 107, 46); font-weight: 700; font-style: normal; font-size: 16px;">Troca: 2 produtos de higiene</p><button data-template-id="product-button-003" type="button" class="canva-button mt-5 w-full rounded-xl px-4 py-3 font-bold text-white" style="background: rgb(9, 42, 70); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;" onclick="openProduct('003')">VER PRODUTO</button>
-       </div>
-      </article>
-      <article data-product="004" data-category="accessories" data-template-id="product-card-004" class="canva-card product-card overflow-hidden rounded-2xl shadow-sm" style="background:#ffffff">
-       <img data-template-id="product-image-004" loading="lazy" class="canva-image h-52 w-full object-cover" src="https://images.pexels.com/photos/1152077/pexels-photo-1152077.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=800" alt="Bolsa de couro marrom">
-       <div class="p-5">
-        <div class="flex items-start justify-between gap-3">
-         <h3 data-template-id="product-name-004" class="canva-text font-bold" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 19px;">Produto 004 – Bolsa Caramelo</h3><span id="status-004" class="status available">● DISPONÍVEL</span>
-        </div>
-        <p data-template-id="product-meta-004" class="canva-text mt-2 text-sm text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Código 004 · Tam. único · Ótimo estado</p>
-        <p data-template-id="product-value-004" class="canva-text mt-3 text-sm font-bold" style="color: rgb(239, 107, 46); font-weight: 700; font-style: normal; font-size: 16px;">Troca: 2 alimentos não perecíveis</p><button data-template-id="product-button-004" type="button" class="canva-button mt-5 w-full rounded-xl px-4 py-3 font-bold text-white" style="background: rgb(9, 42, 70); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;" onclick="openProduct('004')">VER PRODUTO</button>
-       </div>
-      </article>
-      <article data-product="005" data-category="child" data-template-id="product-card-005" class="canva-card product-card overflow-hidden rounded-2xl shadow-sm" style="background:#ffffff">
-       <img data-template-id="product-image-005" loading="lazy" class="canva-image h-52 w-full object-cover" src="https://images.pexels.com/photos/15625985/pexels-photo-15625985.jpeg" alt="Vestidos infantis coloridos em cabides">
-       <div class="p-5">
-        <div class="flex items-start justify-between gap-3">
-         <h3 data-template-id="product-name-005" class="canva-text font-bold" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 19px;">Produto 005 – Vestido Infantil</h3><span id="status-005" class="status available">● DISPONÍVEL</span>
-        </div>
-        <p data-template-id="product-meta-005" class="canva-text mt-2 text-sm text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Código 005 · 8 anos · Ótimo estado</p>
-        <p data-template-id="product-value-005" class="canva-text mt-3 text-sm font-bold" style="color: rgb(239, 107, 46); font-weight: 700; font-style: normal; font-size: 16px;">Troca: 2 produtos de higiene</p><button data-template-id="product-button-005" type="button" class="canva-button mt-5 w-full rounded-xl px-4 py-3 font-bold text-white" style="background: rgb(9, 42, 70); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;" onclick="openProduct('005')">VER PRODUTO</button>
-       </div>
-      </article>
-      <article data-product="006" data-category="accessories" data-template-id="product-card-006" class="canva-card product-card overflow-hidden rounded-2xl shadow-sm" style="background:#ffffff">
-       <img data-template-id="product-image-006" loading="lazy" class="canva-image h-52 w-full object-cover" src="https://images.pexels.com/photos/27204291/pexels-photo-27204291.jpeg" alt="Sandálias bege em fundo neutro">
-       <div class="p-5">
-        <div class="flex items-start justify-between gap-3">
-         <h3 data-template-id="product-name-006" class="canva-text font-bold" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 19px;">Produto 006 – Sandália Bege</h3><span id="status-006" class="status exchanged">● TROCADO</span>
-        </div>
-        <p data-template-id="product-meta-006" class="canva-text mt-2 text-sm text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Código 006 · Tam. 36 · Bom estado</p>
-        <p data-template-id="product-value-006" class="canva-text mt-3 text-sm font-bold" style="color: rgb(239, 107, 46); font-weight: 700; font-style: normal; font-size: 16px;">Troca: 2 alimentos não perecíveis</p><button data-template-id="product-button-006" type="button" class="canva-button mt-5 w-full rounded-xl px-4 py-3 font-bold text-white" style="background: rgb(9, 42, 70); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;" onclick="openProduct('006')">VER PRODUTO</button>
-       </div>
-      </article>
+     <div class="catalog-tools mt-5 grid gap-3 sm:grid-cols-[1fr_220px]">
+       <label class="search-box"><i data-lucide="search" width="18"></i><span class="sr-only">Buscar peça</span><input id="catalog-search" type="search" maxlength="80" placeholder="Buscar por nome ou código" autocomplete="off"></label>
+       <label><span class="sr-only">Ordenar</span><select id="catalog-sort" class="field"><option value="recentes">Mais recentes</option><option value="az">Nome (A-Z)</option><option value="disponiveis">Disponíveis primeiro</option></select></label>
+      </div>
+      <p id="catalog-result-count" class="mt-3 text-sm font-semibold text-slate-500" aria-live="polite"></p>
+     <div id="product-grid" class="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
      </div>
     </div>
    </section>
@@ -224,7 +170,7 @@
     <div class="mx-auto w-full max-w-6xl px-4 py-10 sm:px-6">
      <button type="button" class="mb-7 inline-flex items-center gap-2 text-sm font-bold hover:text-orange-600" onclick="showScreen('catalog')"><i data-lucide="arrow-left" width="18"></i> Voltar ao catálogo</button>
      <div class="grid gap-8 rounded-[1.5rem] bg-white p-5 shadow-sm md:grid-cols-2 md:p-8">
-      <img id="detail-image" class="h-[340px] w-full rounded-2xl object-cover" alt="">
+      <div class="detail-img-wrap overflow-hidden rounded-2xl"><img id="detail-image" class="h-[340px] w-full rounded-2xl object-cover" alt=""></div>
       <div>
        <span id="detail-status" class="status available">● DISPONÍVEL</span>
        <p id="detail-code" class="mt-5 text-sm font-extrabold tracking-[.14em] text-orange-600"></p>
@@ -262,6 +208,7 @@
         <p data-template-id="trade-value-or" class="canva-text my-2 text-sm font-bold text-slate-500" style="color: rgb(100, 116, 139); font-weight: 700; font-style: normal; font-size: 16px;">OU</p>
         <p data-template-id="trade-value-hygiene" class="canva-text text-lg font-bold" style="color: rgb(239, 107, 46); font-weight: 700; font-style: normal; font-size: 16px;">🧴 2 produtos de higiene pessoal</p>
        </aside><button id="trade-button" type="button" class="action-button mt-6 w-full rounded-xl px-5 py-4 font-extrabold text-white" style="background:#ef6b2e" onclick="openReservation()"></button>
+       <div class="mt-3 grid grid-cols-2 gap-3"><button id="detail-fav" type="button" class="detail-secondary fav-toggle" aria-pressed="false" onclick="alternarFavorito(this.dataset.code)"><i data-lucide="heart" width="18"></i> Favoritar</button><button type="button" class="detail-secondary whatsapp" onclick="compartilharWhatsApp()"><i data-lucide="share-2" width="18"></i> WhatsApp</button></div>
       </div>
      </div>
     </div>
@@ -322,13 +269,26 @@
    <section id="confirmation" class="screen">
     <div class="mx-auto w-full max-w-2xl px-4 py-14 text-center sm:px-6">
      <div class="rounded-[1.8rem] bg-white p-8 shadow-sm sm:p-12">
-      <span class="mx-auto grid h-16 w-16 place-items-center rounded-full text-white" style="background:#174d37"><i data-lucide="heart-handshake" width="31"></i></span>
+      <span class="success-badge mx-auto grid h-16 w-16 place-items-center rounded-full text-white" style="background:#174d37"><i data-lucide="heart-handshake" width="31"></i></span>
       <h2 data-template-id="confirmation-title" class="canva-text brand-font mt-6 font-bold" style="color: rgb(9, 42, 70); font-weight: 800; font-style: normal; font-size: 24px;">RESERVA SOLICITADA!</h2>
       <p data-template-id="confirmation-message" class="canva-text mx-auto mt-4 max-w-lg leading-relaxed text-slate-600" style="color: rgb(82, 100, 116); font-weight: 400; font-style: normal; font-size: 16px;">Obrigado por participar do Brechó Solidário Online. Sua solicitação foi registrada e será analisada pela nossa equipe.</p>
-      <div id="confirmation-product" class="mt-7 rounded-2xl p-5 text-left" style="background:#fff0e7"></div>
+      <div class="code-box mt-7 rounded-2xl p-5 text-left"><p class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Código da sua reserva</p><p id="confirmation-code" class="mt-1 break-all font-mono text-sm font-bold text-slate-800"></p><div class="mt-3 flex flex-wrap gap-2"><button type="button" class="chip" onclick="copiarCodigoReserva()"><i data-lucide="copy" width="15"></i> Copiar código</button><button type="button" class="chip" onclick="irParaAcompanhar()"><i data-lucide="radar" width="15"></i> Acompanhar agora</button></div></div>
+      <div id="confirmation-product" class="mt-4 rounded-2xl p-5 text-left" style="background:#fff0e7"></div>
       <div class="mt-7 flex flex-wrap justify-center gap-3">
        <button data-template-id="confirmation-catalog-button" type="button" class="canva-button rounded-xl px-5 py-3 font-bold text-white" style="background: rgb(9, 42, 70); color: rgb(255, 255, 255); font-weight: 700; font-style: normal; font-size: 16px;" onclick="showScreen('catalog')">VOLTAR AO CATÁLOGO</button> <button data-template-id="confirmation-feedback-button" type="button" class="canva-button rounded-xl px-5 py-3 font-bold" style="color: rgb(239, 107, 46); background: rgb(255, 240, 231); font-weight: 700; font-style: normal; font-size: 16px;" onclick="showScreen('feedback')">IR PARA PÓS-VENDA</button>
       </div>
+     </div>
+    </div>
+   </section>
+   <section id="track" class="screen">
+    <div class="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">
+     <div class="rounded-[1.5rem] bg-white p-6 shadow-sm sm:p-9">
+      <p class="text-sm font-extrabold tracking-[.16em]" style="color:#ef6b2e">ACOMPANHAR RESERVA</p>
+      <h2 class="brand-font mt-2 text-2xl font-bold" style="color:#092a46">Como está minha reserva?</h2>
+      <p class="mt-3 text-slate-600">Cole o código que apareceu quando você fez a reserva. Mostramos só a situação e a peça — nenhum dado pessoal.</p>
+      <form id="track-form" class="mt-6 grid gap-3 sm:grid-cols-[1fr_auto]"><label><span class="sr-only">Código da reserva</span><input id="track-code" class="field font-mono" maxlength="36" placeholder="ex.: 3f2a9c1e-..." autocomplete="off" required></label><button id="track-submit" type="submit" class="action-button rounded-xl px-6 py-3 font-extrabold text-white" style="background:#ef6b2e">CONSULTAR</button></form>
+      <div id="track-recent" class="mt-4"></div>
+      <div id="track-result" class="mt-6" aria-live="polite"></div>
      </div>
     </div>
    </section>
