@@ -11,6 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EquipeRouteImport } from './routes/equipe'
+import { Route as ApiPublicAvaliarRouteImport } from './routes/api/public/avaliar'
+import { Route as ApiPublicEquipeConvidarRouteImport } from './routes/api/public/equipe-convidar'
+import { Route as ApiPublicExclusaoRouteImport } from './routes/api/public/exclusao'
+import { Route as ApiPublicReservarRouteImport } from './routes/api/public/reservar'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +26,86 @@ const EquipeRoute = EquipeRouteImport.update({
   path: '/equipe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicAvaliarRoute = ApiPublicAvaliarRouteImport.update({
+  id: '/api/public/avaliar',
+  path: '/api/public/avaliar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicEquipeConvidarRoute = ApiPublicEquipeConvidarRouteImport.update({
+  id: '/api/public/equipe-convidar',
+  path: '/api/public/equipe-convidar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicExclusaoRoute = ApiPublicExclusaoRouteImport.update({
+  id: '/api/public/exclusao',
+  path: '/api/public/exclusao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicReservarRoute = ApiPublicReservarRouteImport.update({
+  id: '/api/public/reservar',
+  path: '/api/public/reservar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/equipe': typeof EquipeRoute
+  '/api/public/avaliar': typeof ApiPublicAvaliarRoute
+  '/api/public/equipe-convidar': typeof ApiPublicEquipeConvidarRoute
+  '/api/public/exclusao': typeof ApiPublicExclusaoRoute
+  '/api/public/reservar': typeof ApiPublicReservarRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/equipe': typeof EquipeRoute
+  '/api/public/avaliar': typeof ApiPublicAvaliarRoute
+  '/api/public/equipe-convidar': typeof ApiPublicEquipeConvidarRoute
+  '/api/public/exclusao': typeof ApiPublicExclusaoRoute
+  '/api/public/reservar': typeof ApiPublicReservarRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/equipe': typeof EquipeRoute
+  '/api/public/avaliar': typeof ApiPublicAvaliarRoute
+  '/api/public/equipe-convidar': typeof ApiPublicEquipeConvidarRoute
+  '/api/public/exclusao': typeof ApiPublicExclusaoRoute
+  '/api/public/reservar': typeof ApiPublicReservarRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/equipe'
+  fullPaths:
+    | '/'
+    | '/equipe'
+    | '/api/public/avaliar'
+    | '/api/public/equipe-convidar'
+    | '/api/public/exclusao'
+    | '/api/public/reservar'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/equipe'
-  id: '__root__' | '/' | '/equipe'
+  to:
+    | '/'
+    | '/equipe'
+    | '/api/public/avaliar'
+    | '/api/public/equipe-convidar'
+    | '/api/public/exclusao'
+    | '/api/public/reservar'
+  id:
+    | '__root__'
+    | '/'
+    | '/equipe'
+    | '/api/public/avaliar'
+    | '/api/public/equipe-convidar'
+    | '/api/public/exclusao'
+    | '/api/public/reservar'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EquipeRoute: typeof EquipeRoute
+  ApiPublicAvaliarRoute: typeof ApiPublicAvaliarRoute
+  ApiPublicEquipeConvidarRoute: typeof ApiPublicEquipeConvidarRoute
+  ApiPublicExclusaoRoute: typeof ApiPublicExclusaoRoute
+  ApiPublicReservarRoute: typeof ApiPublicReservarRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +124,44 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EquipeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/avaliar': {
+      id: '/api/public/avaliar'
+      path: '/api/public/avaliar'
+      fullPath: '/api/public/avaliar'
+      preLoaderRoute: typeof ApiPublicAvaliarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/equipe-convidar': {
+      id: '/api/public/equipe-convidar'
+      path: '/api/public/equipe-convidar'
+      fullPath: '/api/public/equipe-convidar'
+      preLoaderRoute: typeof ApiPublicEquipeConvidarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/exclusao': {
+      id: '/api/public/exclusao'
+      path: '/api/public/exclusao'
+      fullPath: '/api/public/exclusao'
+      preLoaderRoute: typeof ApiPublicExclusaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/reservar': {
+      id: '/api/public/reservar'
+      path: '/api/public/reservar'
+      fullPath: '/api/public/reservar'
+      preLoaderRoute: typeof ApiPublicReservarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EquipeRoute: EquipeRoute,
+  ApiPublicAvaliarRoute: ApiPublicAvaliarRoute,
+  ApiPublicEquipeConvidarRoute: ApiPublicEquipeConvidarRoute,
+  ApiPublicExclusaoRoute: ApiPublicExclusaoRoute,
+  ApiPublicReservarRoute: ApiPublicReservarRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

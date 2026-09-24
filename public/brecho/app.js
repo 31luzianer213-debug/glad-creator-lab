@@ -694,13 +694,69 @@ async function criarReserva() {
     if (!dados.nomeCompleto || !dados.contato || !dados.itemDoacao) {
         throw new Error("Preencha nome, contato e o item da doação.");
     }
+    if (!document.getElementById("privacy-check")?.checked) {
+        throw new Error("Para reservar, aceite a Política de Privacidade.");
+    }
 
-    const { error } = await sb.from("reservas").insert(dados);
-    if (error) {
-        if (error.code === "23514") throw new Error("Alguns dados estão fora do formato aceito. Revise os campos.");
-        throw new Error("Não foi possível registrar sua solicitação. Tente novamente.");
+    const resposta = await enviarAoServidor("/api/public/reservar", {
+        id: dados.id,
+        nomeCompleto: dados.nomeCompleto,
+        contato: dados.contato,
+        codigoProduto: dados.codigoProduto,
+        tipoDoacao: dados.tipoDoacao,
+        itemDoacao: dados.itemDoacao,
+        quantidade: dados.quantidade,
+        consentimento: true
+    }, "reservation-form");
+
+    if (resposta.status === 409) {
+        currentProduct.status = "reserved";
+        atualizarCatalogo();
     }
     return dados;
+}
+
+// Envia formulários públicos pelo servidor (anti-spam, limites e verificação)
+async function enviarAoServidor(caminho, corpo, formId) {
+    const form = document.getElementById(formId);
+    const extra = {
+        site: form?.querySelector('input[name="site"]')?.value || "",
+        inicio: Number(form?.dataset.inicio || 0) || undefined,
+        turnstile: form?.querySelector('[name="cf-turnstile-response"]')?.value || undefined
+    };
+    let resposta;
+    try {
+        resposta = await fetch(caminho, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...corpo, ...extra })
+        });
+    } catch (_) {
+        throw new Error("Sem conexão. Verifique sua internet e tente de novo.");
+    }
+    const dados = await resposta.json().catch(() => ({}));
+    if (!resposta.ok) {
+        const erro = new Error(dados.erro || "Não foi possível enviar agora. Tente novamente.");
+        erro.status = resposta.status;
+        if (resposta.status === 409 && currentProduct) {
+            currentProduct.status = "reserved";
+            atualizarCatalogo();
+        }
+        throw erro;
+    }
+    if (window.turnstile && form) {
+        try { window.turnstile.reset(form.querySelector(".cf-turnstile")); } catch (_) {}
+    }
+    return { status: resposta.status, dados };
+}
+
+function marcarInicioFormularios() {
+    ["reservation-form", "feedback-form"].forEach((id) => {
+        const form = document.getElementById(id);
+        if (!form) return;
+        const marcar = () => { if (!form.dataset.inicio) form.dataset.inicio = String(Date.now()); };
+        form.addEventListener("focusin", marcar);
+    });
 }
 
 function configurarReserva() {
@@ -854,7 +910,12 @@ async function consultarReserva(codigo) {
                         ? '<p class="mt-5 rounded-xl bg-red-50 p-4 font-bold text-red-700">Esta reserva foi cancelada. A peça pode ter voltado ao catálogo.</p>'
                         : `<ol class="etapas mt-6">${etapas}</ol>`
                 }
+                <div class="mt-6 border-t border-slate-200 pt-4">
+                    <button type="button" class="chip" data-excluir-dados="${escaparHTML(id)}"><i data-lucide="shield-x" width="15"></i> Pedir exclusão dos meus dados</button>
+                    <p class="mt-2 text-xs text-slate-500">A equipe apaga seu nome e contato desta reserva. Saiba mais na <a href="/privacidade" target="_top" class="underline">Política de Privacidade</a>.</p>
+                </div>
             </div>`;
+        icones();
     } catch (erro) {
         console.error("Erro ao consultar reserva:", erro);
         if (resultado) resultado.innerHTML = "";
@@ -870,6 +931,23 @@ function configurarAcompanhamento() {
         form.addEventListener("submit", (evento) => {
             evento.preventDefault();
             consultarReserva(document.getElementById("track-code")?.value);
+        });
+    }
+    const resultado = document.getElementById("track-result");
+    if (resultado) {
+        resultado.addEventListener("click", async (evento) => {
+            const botao = evento.target.closest("[data-excluir-dados]");
+            if (!botao) return;
+            if (!window.confirm("Pedir que a equipe apague seu nome e contato desta reserva?")) return;
+            botaoCarregando(botao, true, "Enviando...");
+            try {
+                await enviarAoServidor("/api/public/exclusao", { id: botao.dataset.excluirDados }, "track-form");
+                botao.outerHTML = '<p class="font-bold text-green-700">Pedido enviado. A equipe vai apagar seus dados.</p>';
+                toast("Seu pedido de exclusão foi registrado.", "sucesso", "Pedido enviado");
+            } catch (erro) {
+                botaoCarregando(botao, false);
+                toast(erro.message, "erro");
+            }
         });
     }
     const recentes = document.getElementById("track-recent");
@@ -908,15 +986,14 @@ function configurarAvaliacao() {
 
         try {
             const campo = (id) => (document.getElementById(id)?.value || "").trim();
-            const { error } = await sb.from("avaliacoes").insert({
+            await enviarAoServidor("/api/public/avaliar", {
                 nota: Math.min(5, Math.max(1, Number(rating.value))),
                 facilidade: campo("ease").slice(0, 60),
                 satisfacao: campo("satisfaction").slice(0, 60),
                 participariaNovamente: campo("again").slice(0, 60),
                 recomendaria: campo("recommend").slice(0, 60),
                 sugestao: campo("suggestion").slice(0, 1000)
-            });
-            if (error) throw error;
+            }, "feedback-form");
 
             form.reset();
             if (message) {
@@ -927,7 +1004,7 @@ function configurarAvaliacao() {
             toast("Sua opinião ajuda o brechó a melhorar.", "sucesso", "Avaliação enviada!");
         } catch (erro) {
             console.error("Erro ao enviar avaliação:", erro);
-            toast("Não foi possível enviar sua avaliação. Tente novamente.", "erro");
+            toast(erro.message || "Não foi possível enviar sua avaliação. Tente novamente.", "erro");
         } finally {
             botaoCarregando(button, false);
         }
@@ -946,6 +1023,7 @@ document.addEventListener("DOMContentLoaded", () => {
     configurarReserva();
     configurarAvaliacao();
     configurarAcompanhamento();
+    marcarInicioFormularios();
 
     document.querySelectorAll('[data-category-filter="all"]').forEach((b) => b.classList.add("active"));
 
