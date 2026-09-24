@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EquipeRouteImport } from './routes/equipe'
+import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as ApiPublicAvaliarRouteImport } from './routes/api/public/avaliar'
 import { Route as ApiPublicEquipeConvidarRouteImport } from './routes/api/public/equipe-convidar'
 import { Route as ApiPublicExclusaoRouteImport } from './routes/api/public/exclusao'
@@ -24,6 +25,11 @@ const IndexRoute = IndexRouteImport.update({
 const EquipeRoute = EquipeRouteImport.update({
   id: '/equipe',
   path: '/equipe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacidadeRoute = PrivacidadeRouteImport.update({
+  id: '/privacidade',
+  path: '/privacidade',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicAvaliarRoute = ApiPublicAvaliarRouteImport.update({
@@ -50,6 +56,7 @@ const ApiPublicReservarRoute = ApiPublicReservarRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/equipe': typeof EquipeRoute
+  '/privacidade': typeof PrivacidadeRoute
   '/api/public/avaliar': typeof ApiPublicAvaliarRoute
   '/api/public/equipe-convidar': typeof ApiPublicEquipeConvidarRoute
   '/api/public/exclusao': typeof ApiPublicExclusaoRoute
@@ -58,6 +65,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/equipe': typeof EquipeRoute
+  '/privacidade': typeof PrivacidadeRoute
   '/api/public/avaliar': typeof ApiPublicAvaliarRoute
   '/api/public/equipe-convidar': typeof ApiPublicEquipeConvidarRoute
   '/api/public/exclusao': typeof ApiPublicExclusaoRoute
@@ -67,6 +75,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/equipe': typeof EquipeRoute
+  '/privacidade': typeof PrivacidadeRoute
   '/api/public/avaliar': typeof ApiPublicAvaliarRoute
   '/api/public/equipe-convidar': typeof ApiPublicEquipeConvidarRoute
   '/api/public/exclusao': typeof ApiPublicExclusaoRoute
@@ -77,6 +86,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/equipe'
+    | '/privacidade'
     | '/api/public/avaliar'
     | '/api/public/equipe-convidar'
     | '/api/public/exclusao'
@@ -85,6 +95,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/equipe'
+    | '/privacidade'
     | '/api/public/avaliar'
     | '/api/public/equipe-convidar'
     | '/api/public/exclusao'
@@ -93,6 +104,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/equipe'
+    | '/privacidade'
     | '/api/public/avaliar'
     | '/api/public/equipe-convidar'
     | '/api/public/exclusao'
@@ -102,6 +114,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   EquipeRoute: typeof EquipeRoute
+  PrivacidadeRoute: typeof PrivacidadeRoute
   ApiPublicAvaliarRoute: typeof ApiPublicAvaliarRoute
   ApiPublicEquipeConvidarRoute: typeof ApiPublicEquipeConvidarRoute
   ApiPublicExclusaoRoute: typeof ApiPublicExclusaoRoute
@@ -122,6 +135,13 @@ declare module '@tanstack/react-router' {
       path: '/equipe'
       fullPath: '/equipe'
       preLoaderRoute: typeof EquipeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacidade': {
+      id: '/privacidade'
+      path: '/privacidade'
+      fullPath: '/privacidade'
+      preLoaderRoute: typeof PrivacidadeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/avaliar': {
@@ -158,6 +178,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   EquipeRoute: EquipeRoute,
+  PrivacidadeRoute: PrivacidadeRoute,
   ApiPublicAvaliarRoute: ApiPublicAvaliarRoute,
   ApiPublicEquipeConvidarRoute: ApiPublicEquipeConvidarRoute,
   ApiPublicExclusaoRoute: ApiPublicExclusaoRoute,
