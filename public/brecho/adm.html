@@ -7,6 +7,8 @@
   <title>Área da equipe · Brechó Solidário</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="efeitos.css">
   <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800&amp;family=Fraunces:opsz,wght@9..144,700;9..144,800&amp;display=swap" rel="stylesheet">
   <style>
    :root { --navy:#092a46; --orange:#ef6b2e; --cream:#fbf7ef; }
@@ -67,6 +69,8 @@
    <section id="panel-view" hidden>
 
     <div id="stats" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"></div>
+    <div id="alertas-paradas" class="mt-4"></div>
+    <div id="impacto" class="card mt-4"></div>
 
     <div class="mt-7 flex flex-wrap gap-2 border-b border-slate-200 pb-4">
      <button type="button" class="btn tab active" data-tab="produtos">Produtos</button>
@@ -122,6 +126,7 @@
        <div class="sm:col-span-2"><label class="text-sm font-bold" for="product-troca">Valor da troca solidária</label><input id="product-troca" class="field mt-1" required placeholder="2 kg de arroz"></div>
        <div class="sm:col-span-2"><label class="text-sm font-bold" for="product-descricao">Descrição</label><textarea id="product-descricao" class="field mt-1" rows="3" required></textarea></div>
        <div class="sm:col-span-2"><label class="text-sm font-bold" for="product-imagem">Link da foto (opcional)</label><input id="product-imagem" class="field mt-1" type="url" placeholder="https://..."></div>
+       <div class="sm:col-span-2"><label class="text-sm font-bold" for="product-arquivo">Ou envie uma foto do aparelho</label><input id="product-arquivo" class="field mt-1" type="file" accept="image/jpeg,image/png,image/webp"><p id="product-upload-status" class="mt-1 text-sm font-semibold text-slate-600" aria-live="polite"></p></div>
        <div id="product-preview" class="sm:col-span-2" hidden></div>
        <div class="flex flex-wrap gap-3 sm:col-span-2">
         <button type="submit" id="product-save-btn" class="btn btn-primary">Salvar peça</button>
