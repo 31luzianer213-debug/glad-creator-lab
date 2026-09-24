@@ -50,6 +50,13 @@
       "when": 1790273789136,
       "tag": "0006_melhorias_brecho",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1790275199619,
+      "tag": "0007_lancamento_fase0",
+      "breakpoints": true
     }
   ]
 }

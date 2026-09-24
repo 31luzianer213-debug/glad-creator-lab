@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_log: {
+        Row: {
+          acao: string
+          alvo_email: string
+          autor: string | null
+          autor_email: string
+          criado_em: string
+          id: string
+        }
+        Insert: {
+          acao: string
+          alvo_email: string
+          autor?: string | null
+          autor_email?: string
+          criado_em?: string
+          id?: string
+        }
+        Update: {
+          acao?: string
+          alvo_email?: string
+          autor?: string | null
+          autor_email?: string
+          criado_em?: string
+          id?: string
+        }
+        Relationships: []
+      }
       avaliacoes: {
         Row: {
           createdAt: string
@@ -44,6 +71,87 @@ export type Database = {
           recomendaria?: string
           satisfacao?: string
           sugestao?: string
+        }
+        Relationships: []
+      }
+      historico: {
+        Row: {
+          acao: string
+          antes: Json | null
+          autor: string | null
+          autor_email: string
+          criado_em: string
+          depois: Json | null
+          id: string
+          registro_id: string | null
+          tabela: string
+        }
+        Insert: {
+          acao: string
+          antes?: Json | null
+          autor?: string | null
+          autor_email?: string
+          criado_em?: string
+          depois?: Json | null
+          id?: string
+          registro_id?: string | null
+          tabela: string
+        }
+        Update: {
+          acao?: string
+          antes?: Json | null
+          autor?: string | null
+          autor_email?: string
+          criado_em?: string
+          depois?: Json | null
+          id?: string
+          registro_id?: string | null
+          tabela?: string
+        }
+        Relationships: []
+      }
+      limites_envio: {
+        Row: {
+          criado_em: string
+          id: string
+          ip_hash: string
+          tipo: string
+        }
+        Insert: {
+          criado_em?: string
+          id?: string
+          ip_hash: string
+          tipo: string
+        }
+        Update: {
+          criado_em?: string
+          id?: string
+          ip_hash?: string
+          tipo?: string
+        }
+        Relationships: []
+      }
+      pedidos_exclusao: {
+        Row: {
+          concluido_em: string | null
+          criado_em: string
+          id: string
+          reserva_id: string
+          status: string
+        }
+        Insert: {
+          concluido_em?: string | null
+          criado_em?: string
+          id?: string
+          reserva_id: string
+          status?: string
+        }
+        Update: {
+          concluido_em?: string | null
+          criado_em?: string
+          id?: string
+          reserva_id?: string
+          status?: string
         }
         Relationships: []
       }
@@ -91,7 +199,10 @@ export type Database = {
       }
       reservas: {
         Row: {
+          anonimizadaEm: string | null
           codigoProduto: string
+          consentimentoEm: string | null
+          consentimentoVersao: string
           contato: string
           createdAt: string
           id: string
@@ -104,7 +215,10 @@ export type Database = {
           tipoDoacao: string
         }
         Insert: {
+          anonimizadaEm?: string | null
           codigoProduto?: string
+          consentimentoEm?: string | null
+          consentimentoVersao?: string
           contato?: string
           createdAt?: string
           id?: string
@@ -117,7 +231,10 @@ export type Database = {
           tipoDoacao?: string
         }
         Update: {
+          anonimizadaEm?: string | null
           codigoProduto?: string
+          consentimentoEm?: string | null
+          consentimentoVersao?: string
           contato?: string
           createdAt?: string
           id?: string
@@ -154,6 +271,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      anonimizar_reserva: { Args: { _id: string }; Returns: boolean }
+      anonimizar_reservas_antigas: { Args: never; Returns: number }
       consultar_reserva: {
         Args: { _id: string }
         Returns: {
@@ -170,7 +289,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      listar_admins: {
+        Args: never
+        Returns: {
+          email: string
+          user_id: string
+        }[]
+      }
       reivindicar_admin: { Args: never; Returns: boolean }
+      remover_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "user"
