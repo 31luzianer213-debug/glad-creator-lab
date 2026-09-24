@@ -18,6 +18,14 @@
 11. **Aviso de reservas paradas** há mais de 3 dias em "Pendente", destacadas no topo.
 12. **Painel de impacto**: peças trocadas no mês, reservas por situação e total de doações recebidas.
 
+## Parte 4 — Visual animado (site e painel)
+13. **Efeito de clique** em todos os botões e cartões (leve "afundar" + onda de toque).
+14. **Cartões de confirmação animados**: ao reservar, avaliar, salvar ou excluir, aparece um cartão com ícone de sucesso/erro que entra deslizando e some sozinho.
+15. **Carregamento bonito**: esqueletos cintilantes no lugar das peças enquanto carregam, e botões com rodinha girando durante o envio.
+16. **Entrada suave das telas e peças**: cada tela aparece com fade, e os cartões do catálogo surgem em sequência ao rolar.
+17. **Detalhes**: foto da peça com zoom suave ao passar o dedo/mouse, coração do favorito "pulando", contadores do painel subindo até o número.
+- Tudo respeita quem pediu "menos movimento" no aparelho (animações desligadas nesse caso) e mantém cores, fontes e layout atuais.
+
 ## Detalhes técnicos
 - Arquivos: `public/brecho/index.html`, `app.js`, `style.css`, `adm.html`, `adm.js`.
 - Banco: migração para atualizar categoria + CHECK; bucket público `fotos-produtos` com envio só para admin (política `has_role`).
