@@ -10,8 +10,15 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AvaliarRouteImport } from './routes/avaliar'
 import { Route as EquipeRouteImport } from './routes/equipe'
+import { Route as MinhaReservaRouteImport } from './routes/minha-reserva'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
+import { Route as ProdutosRouteImport } from './routes/produtos'
+import { Route as RegrasRouteImport } from './routes/regras'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ProdutoCodigoRouteImport } from './routes/produto.$codigo'
+import { Route as ReservarCodigoRouteImport } from './routes/reservar.$codigo'
 import { Route as ApiPublicAvaliarRouteImport } from './routes/api/public/avaliar'
 import { Route as ApiPublicEquipeConvidarRouteImport } from './routes/api/public/equipe-convidar'
 import { Route as ApiPublicExclusaoRouteImport } from './routes/api/public/exclusao'
@@ -22,14 +29,49 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AvaliarRoute = AvaliarRouteImport.update({
+  id: '/avaliar',
+  path: '/avaliar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EquipeRoute = EquipeRouteImport.update({
   id: '/equipe',
   path: '/equipe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MinhaReservaRoute = MinhaReservaRouteImport.update({
+  id: '/minha-reserva',
+  path: '/minha-reserva',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PrivacidadeRoute = PrivacidadeRouteImport.update({
   id: '/privacidade',
   path: '/privacidade',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProdutosRoute = ProdutosRouteImport.update({
+  id: '/produtos',
+  path: '/produtos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegrasRoute = RegrasRouteImport.update({
+  id: '/regras',
+  path: '/regras',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProdutoCodigoRoute = ProdutoCodigoRouteImport.update({
+  id: '/produto/$codigo',
+  path: '/produto/$codigo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReservarCodigoRoute = ReservarCodigoRouteImport.update({
+  id: '/reservar/$codigo',
+  path: '/reservar/$codigo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicAvaliarRoute = ApiPublicAvaliarRouteImport.update({
@@ -55,8 +97,15 @@ const ApiPublicReservarRoute = ApiPublicReservarRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/avaliar': typeof AvaliarRoute
   '/equipe': typeof EquipeRoute
+  '/minha-reserva': typeof MinhaReservaRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/produtos': typeof ProdutosRoute
+  '/regras': typeof RegrasRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/produto/$codigo': typeof ProdutoCodigoRoute
+  '/reservar/$codigo': typeof ReservarCodigoRoute
   '/api/public/avaliar': typeof ApiPublicAvaliarRoute
   '/api/public/equipe-convidar': typeof ApiPublicEquipeConvidarRoute
   '/api/public/exclusao': typeof ApiPublicExclusaoRoute
@@ -64,8 +113,15 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/avaliar': typeof AvaliarRoute
   '/equipe': typeof EquipeRoute
+  '/minha-reserva': typeof MinhaReservaRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/produtos': typeof ProdutosRoute
+  '/regras': typeof RegrasRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/produto/$codigo': typeof ProdutoCodigoRoute
+  '/reservar/$codigo': typeof ReservarCodigoRoute
   '/api/public/avaliar': typeof ApiPublicAvaliarRoute
   '/api/public/equipe-convidar': typeof ApiPublicEquipeConvidarRoute
   '/api/public/exclusao': typeof ApiPublicExclusaoRoute
@@ -74,8 +130,15 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/avaliar': typeof AvaliarRoute
   '/equipe': typeof EquipeRoute
+  '/minha-reserva': typeof MinhaReservaRoute
   '/privacidade': typeof PrivacidadeRoute
+  '/produtos': typeof ProdutosRoute
+  '/regras': typeof RegrasRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/produto/$codigo': typeof ProdutoCodigoRoute
+  '/reservar/$codigo': typeof ReservarCodigoRoute
   '/api/public/avaliar': typeof ApiPublicAvaliarRoute
   '/api/public/equipe-convidar': typeof ApiPublicEquipeConvidarRoute
   '/api/public/exclusao': typeof ApiPublicExclusaoRoute
@@ -85,8 +148,15 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/avaliar'
     | '/equipe'
+    | '/minha-reserva'
     | '/privacidade'
+    | '/produtos'
+    | '/regras'
+    | '/sitemap.xml'
+    | '/produto/$codigo'
+    | '/reservar/$codigo'
     | '/api/public/avaliar'
     | '/api/public/equipe-convidar'
     | '/api/public/exclusao'
@@ -94,8 +164,15 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/avaliar'
     | '/equipe'
+    | '/minha-reserva'
     | '/privacidade'
+    | '/produtos'
+    | '/regras'
+    | '/sitemap.xml'
+    | '/produto/$codigo'
+    | '/reservar/$codigo'
     | '/api/public/avaliar'
     | '/api/public/equipe-convidar'
     | '/api/public/exclusao'
@@ -103,8 +180,15 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/avaliar'
     | '/equipe'
+    | '/minha-reserva'
     | '/privacidade'
+    | '/produtos'
+    | '/regras'
+    | '/sitemap.xml'
+    | '/produto/$codigo'
+    | '/reservar/$codigo'
     | '/api/public/avaliar'
     | '/api/public/equipe-convidar'
     | '/api/public/exclusao'
@@ -113,8 +197,15 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AvaliarRoute: typeof AvaliarRoute
   EquipeRoute: typeof EquipeRoute
+  MinhaReservaRoute: typeof MinhaReservaRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
+  ProdutosRoute: typeof ProdutosRoute
+  RegrasRoute: typeof RegrasRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ProdutoCodigoRoute: typeof ProdutoCodigoRoute
+  ReservarCodigoRoute: typeof ReservarCodigoRoute
   ApiPublicAvaliarRoute: typeof ApiPublicAvaliarRoute
   ApiPublicEquipeConvidarRoute: typeof ApiPublicEquipeConvidarRoute
   ApiPublicExclusaoRoute: typeof ApiPublicExclusaoRoute
@@ -130,6 +221,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/avaliar': {
+      id: '/avaliar'
+      path: '/avaliar'
+      fullPath: '/avaliar'
+      preLoaderRoute: typeof AvaliarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/equipe': {
       id: '/equipe'
       path: '/equipe'
@@ -137,11 +235,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EquipeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/minha-reserva': {
+      id: '/minha-reserva'
+      path: '/minha-reserva'
+      fullPath: '/minha-reserva'
+      preLoaderRoute: typeof MinhaReservaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/privacidade': {
       id: '/privacidade'
       path: '/privacidade'
       fullPath: '/privacidade'
       preLoaderRoute: typeof PrivacidadeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/produtos': {
+      id: '/produtos'
+      path: '/produtos'
+      fullPath: '/produtos'
+      preLoaderRoute: typeof ProdutosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/regras': {
+      id: '/regras'
+      path: '/regras'
+      fullPath: '/regras'
+      preLoaderRoute: typeof RegrasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/produto/$codigo': {
+      id: '/produto/$codigo'
+      path: '/produto/$codigo'
+      fullPath: '/produto/$codigo'
+      preLoaderRoute: typeof ProdutoCodigoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reservar/$codigo': {
+      id: '/reservar/$codigo'
+      path: '/reservar/$codigo'
+      fullPath: '/reservar/$codigo'
+      preLoaderRoute: typeof ReservarCodigoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/avaliar': {
@@ -177,8 +317,15 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AvaliarRoute: AvaliarRoute,
   EquipeRoute: EquipeRoute,
+  MinhaReservaRoute: MinhaReservaRoute,
   PrivacidadeRoute: PrivacidadeRoute,
+  ProdutosRoute: ProdutosRoute,
+  RegrasRoute: RegrasRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ProdutoCodigoRoute: ProdutoCodigoRoute,
+  ReservarCodigoRoute: ReservarCodigoRoute,
   ApiPublicAvaliarRoute: ApiPublicAvaliarRoute,
   ApiPublicEquipeConvidarRoute: ApiPublicEquipeConvidarRoute,
   ApiPublicExclusaoRoute: ApiPublicExclusaoRoute,

@@ -42,6 +42,10 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --font-sans: "Work Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces", Georgia, serif;
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -62,26 +66,28 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.129 0.042 264.695);
+  --radius: 1rem;
+  --background: oklch(0.975 0.012 75);
+  --foreground: oklch(0.27 0.065 250);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.129 0.042 264.695);
+  --card-foreground: oklch(0.27 0.065 250);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
-  --primary-foreground: oklch(0.984 0.003 247.858);
-  --secondary: oklch(0.968 0.007 247.896);
-  --secondary-foreground: oklch(0.208 0.042 265.755);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.554 0.046 257.417);
-  --accent: oklch(0.968 0.007 247.896);
-  --accent-foreground: oklch(0.208 0.042 265.755);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.929 0.013 255.508);
-  --input: oklch(0.929 0.013 255.508);
-  --ring: oklch(0.704 0.04 256.788);
+  --popover-foreground: oklch(0.27 0.065 250);
+  --primary: oklch(0.665 0.18 42);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.27 0.065 250);
+  --secondary-foreground: oklch(0.98 0.01 75);
+  --muted: oklch(0.945 0.018 75);
+  --muted-foreground: oklch(0.45 0.04 250);
+  --accent: oklch(0.93 0.05 60);
+  --accent-foreground: oklch(0.27 0.065 250);
+  --destructive: oklch(0.55 0.2 30);
+  --destructive-foreground: oklch(1 0 0);
+  --success: oklch(0.5 0.12 150);
+  --success-foreground: oklch(1 0 0);
+  --border: oklch(0.9 0.02 75);
+  --input: oklch(0.88 0.02 75);
+  --ring: oklch(0.665 0.18 42);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -145,4 +151,12 @@
 
 #lovable-badge {
   display: none !important;
+}
+
+@layer base {
+  body { font-family: var(--font-sans); }
+  h1, h2, h3, .font-display { font-family: var(--font-display); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
