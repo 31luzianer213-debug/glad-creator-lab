@@ -45,7 +45,56 @@ function dataBonita(valor) {
         : d.toLocaleDateString("pt-BR") + " às " + d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 }
 
+function toast(mensagem, tipo) {
+    let pilha = document.getElementById("toast-stack");
+    if (!pilha) {
+        pilha = document.createElement("div");
+        pilha.id = "toast-stack";
+        pilha.setAttribute("aria-live", "polite");
+        document.body.appendChild(pilha);
+    }
+    const icone = { sucesso: "check-circle-2", erro: "alert-circle", info: "info" }[tipo] || "info";
+    const titulo = { sucesso: "Tudo certo!", erro: "Ops, algo deu errado", info: "Aviso" }[tipo] || "Aviso";
+    const item = document.createElement("div");
+    item.className = "toast toast-" + tipo;
+    item.setAttribute("role", tipo === "erro" ? "alert" : "status");
+    item.innerHTML = '<span class="toast-icon"><i data-lucide="' + icone + '"></i></span><div class="toast-body"><strong>' + titulo + "</strong><p>" + esc(mensagem) + '</p></div><button type="button" class="toast-close" aria-label="Fechar aviso">&times;</button><span class="toast-bar"></span>';
+    pilha.appendChild(item);
+    if (typeof lucide !== "undefined") lucide.createIcons();
+    const fechar = () => { item.classList.add("saindo"); setTimeout(() => item.remove(), 300); };
+    item.querySelector(".toast-close").addEventListener("click", fechar);
+    setTimeout(fechar, 4500);
+}
+
+function botaoCarregando(botao, carregando, txt) {
+    if (!botao) return;
+    if (carregando) {
+        botao.dataset.orig = botao.innerHTML;
+        botao.disabled = true;
+        botao.classList.add("is-loading");
+        botao.innerHTML = '<span class="spinner" aria-hidden="true"></span> ' + esc(txt || "Salvando...");
+    } else {
+        botao.disabled = false;
+        botao.classList.remove("is-loading");
+        if (botao.dataset.orig) botao.innerHTML = botao.dataset.orig;
+    }
+}
+
+function contarAte(el) {
+    const alvo = Number(el.dataset.contar);
+    if (!Number.isFinite(alvo) || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const decimais = String(el.dataset.contar).includes(".") ? 1 : 0;
+    const inicio = performance.now();
+    const passo = (agora) => {
+        const t = Math.min(1, (agora - inicio) / 800);
+        el.textContent = (alvo * (1 - Math.pow(1 - t, 3))).toFixed(decimais);
+        if (t < 1) requestAnimationFrame(passo);
+    };
+    requestAnimationFrame(passo);
+}
+
 function aviso(mensagem, cor) {
+    if (mensagem) toast(mensagem, cor === "#b23b16" ? "erro" : cor === "#a84912" ? "info" : "sucesso");
     const alvo = document.getElementById("panel-message");
 
     if (!alvo) return;
@@ -175,9 +224,9 @@ async function abrirPainel() {
 
 function cartaoEstatistica(rotulo, valor, detalhe) {
     return (
-        '<div class="card">' +
+        '<div class="card stat-card">' +
         '<p class="text-xs font-extrabold tracking-[.14em]" style="color:#ef6b2e">' + esc(rotulo) + "</p>" +
-        '<p class="brand-font mt-1 text-3xl font-bold" style="color:#092a46">' + esc(valor) + "</p>" +
+        '<p class="brand-font mt-1 text-3xl font-bold" style="color:#092a46" data-contar="' + esc(valor) + '">' + esc(valor) + "</p>" +
         '<p class="mt-1 text-sm text-slate-600">' + esc(detalhe) + "</p>" +
         "</div>"
     );
@@ -201,6 +250,86 @@ function renderEstatisticas() {
         cartaoEstatistica("EM MOVIMENTO", reservados + trocados, reservados + " reservadas · " + trocados + " trocadas") +
         cartaoEstatistica("RESERVAS", reservas.length, pendentes + " aguardando resposta") +
         cartaoEstatistica("NOTA MÉDIA", media, avaliacoes.length + " avaliações recebidas");
+    alvo.querySelectorAll("[data-contar]").forEach(contarAte);
+    renderAlertasParadas();
+    renderImpacto();
+}
+
+const DIAS_PARADA = 3;
+
+function reservaParada(r) {
+    const d = Date.parse(r.createdAt || "");
+    return r.status === "Pendente" && d && Date.now() - d > DIAS_PARADA * 86400000;
+}
+
+function renderAlertasParadas() {
+    const alvo = document.getElementById("alertas-paradas");
+    if (!alvo) return;
+    const paradas = reservas.filter(reservaParada);
+    alvo.innerHTML = paradas.length
+        ? '<div class="card alerta-parada"><p class="font-extrabold" style="color:#a84912">⏰ ' + paradas.length + (paradas.length === 1 ? " reserva está parada" : " reservas estão paradas") + " há mais de " + DIAS_PARADA + ' dias em "Pendente".</p><p class="mt-1 text-sm text-slate-600">' + paradas.slice(0, 5).map((r) => esc(texto(r.nomeCompleto, "Sem nome")) + " (#" + esc(texto(r.codigoProduto, "—")) + ")").join(" · ") + '</p><button type="button" class="btn btn-soft mt-3" id="ver-paradas-btn">Ver reservas pendentes</button></div>'
+        : "";
+}
+
+function renderImpacto() {
+    const alvo = document.getElementById("impacto");
+    if (!alvo) return;
+    const agora = new Date();
+    const doMes = (r) => { const d = new Date(r.createdAt); return d.getMonth() === agora.getMonth() && d.getFullYear() === agora.getFullYear(); };
+    const concluidas = reservas.filter((r) => r.status === "Vendido");
+    const trocasMes = concluidas.filter(doMes).length;
+    const doacoes = concluidas.reduce((s, r) => s + (Number(r.quantidade) || 0), 0);
+    const total = reservas.length || 1;
+    const barras = STATUS_RESERVA.map((s) => {
+        const n = reservas.filter((r) => r.status === s).length;
+        return '<div class="grid grid-cols-[110px_1fr_32px] items-center gap-3 text-sm"><span class="font-semibold text-slate-600">' + s + '</span><div class="barra-impacto"><span style="width:' + Math.round((n / total) * 100) + '%"></span></div><strong style="color:#092a46">' + n + "</strong></div>";
+    }).join("");
+    alvo.innerHTML =
+        '<div class="flex flex-wrap items-end justify-between gap-3"><div><p class="text-xs font-extrabold tracking-[.14em]" style="color:#ef6b2e">PAINEL DE IMPACTO</p><h2 class="brand-font text-xl font-bold" style="color:#092a46">O bem que já circulou</h2></div></div>' +
+        '<div class="mt-4 grid gap-3 sm:grid-cols-3">' +
+        '<div class="rounded-xl bg-orange-50 p-4"><p class="text-xs font-bold text-slate-500">TROCAS NESTE MÊS</p><p class="brand-font text-3xl font-bold" style="color:#092a46" data-contar="' + trocasMes + '">' + trocasMes + "</p></div>" +
+        '<div class="rounded-xl bg-orange-50 p-4"><p class="text-xs font-bold text-slate-500">TROCAS CONCLUÍDAS</p><p class="brand-font text-3xl font-bold" style="color:#092a46" data-contar="' + concluidas.length + '">' + concluidas.length + "</p></div>" +
+        '<div class="rounded-xl bg-orange-50 p-4"><p class="text-xs font-bold text-slate-500">ITENS DOADOS</p><p class="brand-font text-3xl font-bold" style="color:#092a46" data-contar="' + doacoes + '">' + doacoes + "</p></div>" +
+        "</div>" +
+        '<p class="mt-5 text-sm font-bold text-slate-600">Reservas por situação</p><div class="mt-2 grid gap-2">' + barras + "</div>";
+    alvo.querySelectorAll("[data-contar]").forEach(contarAte);
+}
+
+async function enviarFoto() {
+    const input = document.getElementById("product-arquivo");
+    const status = document.getElementById("product-upload-status");
+    const arquivo = input?.files?.[0];
+    if (!arquivo) return;
+    if (!["image/jpeg", "image/png", "image/webp"].includes(arquivo.type)) {
+        toast("Envie uma foto JPG, PNG ou WEBP.", "erro"); input.value = ""; return;
+    }
+    if (arquivo.size > 5 * 1024 * 1024) {
+        toast("A foto passa de 5 MB. Escolha uma menor.", "erro"); input.value = ""; return;
+    }
+    const ext = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" }[arquivo.type];
+    const caminho = (crypto.randomUUID ? crypto.randomUUID() : Date.now()) + "." + ext;
+    status.innerHTML = '<span class="spinner"></span> Enviando foto...';
+    const { error } = await sb.storage.from("fotos-produtos").upload(caminho, arquivo, { contentType: arquivo.type, upsert: false });
+    if (error) {
+        status.textContent = ""; toast("Não foi possível enviar a foto: " + erroAmigavel(error), "erro"); return;
+    }
+    const { data, error: erroLink } = await sb.storage.from("fotos-produtos").createSignedUrl(caminho, 60 * 60 * 24 * 365 * 10);
+    if (erroLink || !data?.signedUrl) {
+        status.textContent = ""; toast("A foto subiu, mas não geramos o link. Tente de novo.", "erro"); return;
+    }
+    document.getElementById("product-imagem").value = data.signedUrl;
+    status.textContent = "Foto enviada ✓";
+    atualizarPreviaFoto();
+    toast("Foto enviada. Agora é só salvar a peça.", "sucesso");
+}
+
+function duplicarProduto(id) {
+    const original = produtos.find((p) => String(p.id) === String(id));
+    if (!original) return;
+    abrirFormularioProduto(Object.assign({}, original, { id: "", codigo: "" }));
+    document.getElementById("product-form-title").textContent = "Duplicar peça";
+    document.getElementById("product-codigo").focus();
+    toast("Copiamos os dados. Informe um código novo e salve.", "info");
 }
 
 /* ---------------- PRODUTOS ---------------- */
@@ -259,6 +388,7 @@ function renderProdutos() {
                     .join("") +
                 "</select>" +
                 '<button type="button" class="btn btn-soft" data-produto-editar="' + esc(p.id) + '">Editar</button>' +
+                '<button type="button" class="btn btn-soft" data-produto-duplicar="' + esc(p.id) + '">Duplicar</button>' +
                 '<button type="button" class="btn btn-soft" data-produto-excluir="' + esc(p.id) + '" style="color:#b23b16">Excluir</button>' +
                 "</div>" +
                 "</article>"
@@ -282,6 +412,8 @@ function abrirFormularioProduto(produto) {
     document.getElementById("product-descricao").value = produto?.descricao || "";
     document.getElementById("product-imagem").value = produto?.imagem || "";
 
+    document.getElementById("product-arquivo").value = "";
+    document.getElementById("product-upload-status").textContent = "";
     atualizarPreviaFoto();
 
     document.getElementById("product-form-box").scrollIntoView({ behavior: "smooth", block: "start" });
@@ -332,15 +464,13 @@ async function salvarProduto(evento) {
 
     const botao = document.getElementById("product-save-btn");
 
-    botao.disabled = true;
-    botao.style.opacity = ".6";
+    botaoCarregando(botao, true, "Salvando...");
 
     const { error } = id
         ? await sb.from("produtos").update(corpo).eq("id", id)
         : await sb.from("produtos").insert(corpo);
 
-    botao.disabled = false;
-    botao.style.opacity = "";
+    botaoCarregando(botao, false);
 
     if (error) {
         aviso(erroAmigavel(error), "#b23b16");
@@ -411,10 +541,10 @@ function renderReservas() {
     alvo.innerHTML = itens
         .map(
             (r) =>
-                '<article class="card">' +
+                '<article class="card' + (reservaParada(r) ? " reserva-parada" : "") + '">' +
                 '<div class="flex flex-wrap items-start justify-between gap-3">' +
                 "<div>" +
-                '<p class="text-xs font-bold text-slate-500">' + esc(dataBonita(r.createdAt)) + "</p>" +
+                '<p class="text-xs font-bold text-slate-500">' + esc(dataBonita(r.createdAt)) + (reservaParada(r) ? ' · <span style="color:#a84912">⏰ parada há mais de ' + DIAS_PARADA + " dias</span>" : "") + "</p>" +
                 '<h3 class="brand-font text-lg font-bold" style="color:#092a46">' + esc(texto(r.nomeCompleto, "Sem nome")) + "</h3>" +
                 '<p class="text-sm text-slate-600">Contato: ' + esc(texto(r.contato, "não informado")) + "</p>" +
                 '<p class="text-sm text-slate-600">Peça: #' + esc(texto(r.codigoProduto, "—")) + " · " + esc(texto(r.nomeProduto, "—")) + "</p>" +
@@ -564,6 +694,7 @@ function ligarEventos() {
     document.getElementById("product-cancel-btn").addEventListener("click", fecharFormularioProduto);
     document.getElementById("product-form").addEventListener("submit", salvarProduto);
     document.getElementById("product-imagem").addEventListener("input", atualizarPreviaFoto);
+    document.getElementById("product-arquivo").addEventListener("change", enviarFoto);
 
     ["product-search", "product-status-filter", "product-category-filter"].forEach((id) =>
         document.getElementById(id).addEventListener("input", renderProdutos)
@@ -607,11 +738,17 @@ function ligarEventos() {
     );
 
     document.addEventListener("click", (e) => {
-        const alvo = e.target.closest("[data-produto-editar],[data-produto-excluir],[data-reserva-excluir],[data-reserva-salvar],[data-avaliacao-excluir]");
+        const alvo = e.target.closest("#ver-paradas-btn,[data-produto-duplicar],[data-produto-editar],[data-produto-excluir],[data-reserva-excluir],[data-reserva-salvar],[data-avaliacao-excluir]");
 
         if (!alvo) return;
 
-        if (alvo.dataset.produtoEditar) {
+        if (alvo.id === "ver-paradas-btn") {
+            trocarAba("reservas");
+            document.getElementById("reserva-status-filter").value = "Pendente";
+            renderReservas();
+        } else if (alvo.dataset.produtoDuplicar) {
+            duplicarProduto(alvo.dataset.produtoDuplicar);
+        } else if (alvo.dataset.produtoEditar) {
             abrirFormularioProduto(produtos.find((p) => String(p.id) === alvo.dataset.produtoEditar));
         } else if (alvo.dataset.produtoExcluir) {
             excluirProduto(alvo.dataset.produtoExcluir);

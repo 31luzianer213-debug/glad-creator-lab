@@ -154,6 +154,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      consultar_reserva: {
+        Args: { _id: string }
+        Returns: {
+          codigoProduto: string
+          createdAt: string
+          nomeProduto: string
+          status: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

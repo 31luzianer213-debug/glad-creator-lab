@@ -43,6 +43,13 @@
       "when": 1789933316005,
       "tag": "0005_0005_admin_unico",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790273789136,
+      "tag": "0006_melhorias_brecho",
+      "breakpoints": true
     }
   ]
 }
