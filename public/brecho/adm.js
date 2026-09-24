@@ -851,7 +851,6 @@ async function carregarExtras() {
 }
 
 function renderEquipe(admins, log) {
-    const { data: sessao } = { data: null };
     const alvo = document.getElementById("equipe-list");
     alvo.innerHTML = admins.length
         ? admins.map((a) =>
