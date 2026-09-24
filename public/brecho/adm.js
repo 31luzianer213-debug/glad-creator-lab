@@ -412,6 +412,8 @@ function abrirFormularioProduto(produto) {
     document.getElementById("product-descricao").value = produto?.descricao || "";
     document.getElementById("product-imagem").value = produto?.imagem || "";
 
+    document.getElementById("product-arquivo").value = "";
+    document.getElementById("product-upload-status").textContent = "";
     atualizarPreviaFoto();
 
     document.getElementById("product-form-box").scrollIntoView({ behavior: "smooth", block: "start" });
