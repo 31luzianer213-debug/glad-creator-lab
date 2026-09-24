@@ -61,6 +61,7 @@
       <input id="login-password" type="password" class="field" autocomplete="current-password" minlength="6" required>
       <p id="login-message" class="mt-3 text-sm font-semibold" aria-live="polite"></p>
       <button type="submit" class="btn btn-primary mt-5 w-full">ENTRAR</button>
+      <button type="button" id="esqueci-btn" class="mt-3 w-full text-sm font-bold underline" style="color:var(--navy)">Esqueci minha senha</button>
      </form>
     </div>
    </section>
@@ -76,6 +77,9 @@
      <button type="button" class="btn tab active" data-tab="produtos">Produtos</button>
      <button type="button" class="btn tab" data-tab="reservas">Reservas</button>
      <button type="button" class="btn tab" data-tab="avaliacoes">Pós-venda</button>
+     <button type="button" class="btn tab" data-tab="equipe">Equipe</button>
+     <button type="button" class="btn tab" data-tab="privacidade">Privacidade <span id="pedidos-count" class="fav-count"></span></button>
+     <button type="button" class="btn tab" data-tab="historico">Histórico</button>
     </div>
 
     <p id="panel-message" class="mt-4 font-bold" aria-live="polite"></p>
@@ -142,7 +146,7 @@
     <section data-panel="reservas" class="mt-6" hidden>
      <div class="flex flex-wrap items-center justify-between gap-3">
       <h2 class="brand-font text-2xl font-bold" style="color:var(--navy)">Reservas</h2>
-      <button type="button" id="export-reservas-btn" class="btn btn-ghost">Baixar planilha</button>
+      <div class="flex flex-wrap gap-2"><button type="button" id="export-reservas-btn" class="btn btn-ghost">Baixar planilha</button><button type="button" id="export-reservas-anon-btn" class="btn btn-soft">Planilha sem contato</button></div>
      </div>
 
      <div class="mt-4 grid gap-3 sm:grid-cols-2">
@@ -169,6 +173,45 @@
      <div id="avaliacao-list" class="mt-6 grid gap-4"></div>
     </section>
 
+    <!-- EQUIPE -->
+    <section data-panel="equipe" class="mt-6" hidden>
+     <h2 class="brand-font text-2xl font-bold" style="color:var(--navy)">Equipe</h2>
+     <p class="mt-1 text-slate-600">Administradoras podem adicionar outras pessoas. Quem ainda não tem conta recebe um convite por e-mail para criar a senha.</p>
+     <form id="equipe-form" class="card mt-4 grid gap-3 sm:grid-cols-[1fr_auto]">
+      <label><span class="sr-only">E-mail</span><input id="equipe-email" type="email" class="field" placeholder="email@exemplo.com" required maxlength="200"></label>
+      <button type="submit" id="equipe-add-btn" class="btn btn-primary">Adicionar à equipe</button>
+     </form>
+     <div id="equipe-list" class="mt-4 grid gap-3"></div>
+     <h3 class="brand-font mt-8 text-lg font-bold" style="color:var(--navy)">Registro de acessos</h3>
+     <div id="admin-log" class="mt-3 grid gap-2"></div>
+    </section>
+
+    <!-- PRIVACIDADE -->
+    <section data-panel="privacidade" class="mt-6" hidden>
+     <h2 class="brand-font text-2xl font-bold" style="color:var(--navy)">Pedidos de exclusão (LGPD)</h2>
+     <p class="mt-1 text-slate-600">Pessoas que pediram para apagar nome e contato de uma reserva. Reservas concluídas ou canceladas também são apagadas automaticamente após 6 meses.</p>
+     <div id="pedidos-list" class="mt-4 grid gap-3"></div>
+    </section>
+
+    <!-- HISTÓRICO -->
+    <section data-panel="historico" class="mt-6" hidden>
+     <h2 class="brand-font text-2xl font-bold" style="color:var(--navy)">Histórico de alterações</h2>
+     <p class="mt-1 text-slate-600">Últimas 200 mudanças em peças e reservas: quem fez, quando e o que mudou.</p>
+     <div id="historico-list" class="mt-4 grid gap-2"></div>
+    </section>
+
+   </section>
+
+   <!-- DEFINIR SENHA (convite ou recuperação) -->
+   <section id="senha-view" hidden>
+    <div class="card mx-auto max-w-md">
+     <h2 class="brand-font text-2xl font-bold" style="color:var(--navy)">Definir nova senha</h2>
+     <form id="senha-form" class="mt-5">
+      <label class="mb-2 block text-sm font-bold" for="nova-senha">Nova senha (mín. 8 caracteres)</label>
+      <input id="nova-senha" type="password" class="field" minlength="8" autocomplete="new-password" required>
+      <button type="submit" id="senha-btn" class="btn btn-primary mt-5 w-full">SALVAR SENHA</button>
+     </form>
+    </div>
    </section>
   </main>
 

@@ -262,7 +262,9 @@
        <div><label data-template-id="label-quantity" class="canva-text mb-2 block text-sm font-bold" for="donation-quantity" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 16px;">Quantidade</label><input id="donation-quantity" type="number" min="1" class="field" required="">
        </div>
       </div><label class="mt-6 flex items-start gap-3 rounded-xl p-4" style="background:#fff7f1"><input id="aware-check" type="checkbox" class="mt-1" required=""><span data-template-id="reservation-awareness" class="canva-text text-sm leading-relaxed text-slate-700" style="color: rgb(51, 78, 104); font-weight: 400; font-style: normal; font-size: 16px;">Estou ciente de que esta solicitação representa uma reserva e que a troca somente será concluída após confirmação da equipe.</span></label>
-      <p id="reservation-message" class="mt-4 text-sm font-semibold" aria-live="polite"></p><button data-template-id="reservation-submit-button" id="reservation-submit" type="submit" class="canva-button action-button mt-5 w-full rounded-xl px-6 py-4 font-extrabold text-white" style="background: rgb(239, 107, 46); color: rgb(255, 255, 255); font-weight: 800; font-style: normal; font-size: 16px;">SOLICITAR RESERVA</button>
+      <label class="mt-3 flex items-start gap-3 rounded-xl border border-slate-200 p-4"><input id="privacy-check" type="checkbox" class="mt-1" required=""><span class="text-sm leading-relaxed text-slate-700">Li e aceito a <a href="/privacidade" target="_top" class="font-bold text-orange-700 underline">Política de Privacidade</a>. Meu nome e contato serão usados só para combinar esta troca e apagados até 6 meses após a conclusão.</span></label>
+       <div class="hp-field" aria-hidden="true"><label>Não preencha<input type="text" name="site" tabindex="-1" autocomplete="off"></label></div>
+       <p id="reservation-message" class="mt-4 text-sm font-semibold" aria-live="polite"></p><button data-template-id="reservation-submit-button" id="reservation-submit" type="submit" class="canva-button action-button mt-5 w-full rounded-xl px-6 py-4 font-extrabold text-white" style="background: rgb(239, 107, 46); color: rgb(255, 255, 255); font-weight: 800; font-style: normal; font-size: 16px;">SOLICITAR RESERVA</button>
      </form>
     </div>
    </section>
@@ -314,14 +316,15 @@
        <div><label data-template-id="feedback-suggestion-label" class="canva-text mb-2 block font-bold" for="suggestion" style="color: rgb(9, 42, 70); font-weight: 700; font-style: normal; font-size: 16px;">Deixe sua sugestão</label><textarea id="suggestion" class="field min-h-28" placeholder="Escreva aqui sua sugestão"></textarea>
        </div>
       </div>
-      <p id="feedback-message" class="mt-4 font-bold" aria-live="polite"></p><button data-template-id="feedback-submit-button" id="feedback-submit" type="submit" class="canva-button action-button mt-5 w-full rounded-xl px-6 py-4 font-extrabold text-white" style="background: rgb(239, 107, 46); color: rgb(255, 255, 255); font-weight: 800; font-style: normal; font-size: 16px;">ENVIAR AVALIAÇÃO</button>
+      <div class="hp-field" aria-hidden="true"><label>Não preencha<input type="text" name="site" tabindex="-1" autocomplete="off"></label></div>
+       <p id="feedback-message" class="mt-4 font-bold" aria-live="polite"></p><button data-template-id="feedback-submit-button" id="feedback-submit" type="submit" class="canva-button action-button mt-5 w-full rounded-xl px-6 py-4 font-extrabold text-white" style="background: rgb(239, 107, 46); color: rgb(255, 255, 255); font-weight: 800; font-style: normal; font-size: 16px;">ENVIAR AVALIAÇÃO</button>
      </form>
     </div>
    </section>
   </main>
   <footer class="mt-10 border-t border-slate-200 bg-white">
    <div class="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-6 text-sm text-slate-500 sm:px-6">
-    <span>Brechó Solidário Online · Consumo consciente em movimento.</span> <span class="font-semibold text-slate-600">Escolha. Troque. Faça o bem.</span>
+    <span>Brechó Solidário Online · Consumo consciente em movimento. · <a href="/privacidade" target="_top" class="underline hover:text-orange-600">Política de Privacidade</a></span> <span class="font-semibold text-slate-600">Escolha. Troque. Faça o bem.</span>
    </div>
   </footer>
   <script src="app.js"></script>

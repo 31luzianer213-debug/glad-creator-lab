@@ -210,6 +210,7 @@ async function carregarTudo() {
     renderProdutos();
     renderReservas();
     renderAvaliacoes();
+    carregarExtras().catch((e) => console.error(e));
 }
 
 async function abrirPainel() {
@@ -255,20 +256,21 @@ function renderEstatisticas() {
     renderImpacto();
 }
 
-const DIAS_PARADA = 3;
+let HORAS_PARADA = Number(localStorage.getItem("brecho-horas-parada")) || 48;
 
 function reservaParada(r) {
     const d = Date.parse(r.createdAt || "");
-    return r.status === "Pendente" && d && Date.now() - d > DIAS_PARADA * 86400000;
+    return r.status === "Pendente" && d && Date.now() - d > HORAS_PARADA * 3600000;
 }
 
 function renderAlertasParadas() {
     const alvo = document.getElementById("alertas-paradas");
     if (!alvo) return;
     const paradas = reservas.filter(reservaParada);
-    alvo.innerHTML = paradas.length
-        ? '<div class="card alerta-parada"><p class="font-extrabold" style="color:#a84912">⏰ ' + paradas.length + (paradas.length === 1 ? " reserva está parada" : " reservas estão paradas") + " há mais de " + DIAS_PARADA + ' dias em "Pendente".</p><p class="mt-1 text-sm text-slate-600">' + paradas.slice(0, 5).map((r) => esc(texto(r.nomeCompleto, "Sem nome")) + " (#" + esc(texto(r.codigoProduto, "—")) + ")").join(" · ") + '</p><button type="button" class="btn btn-soft mt-3" id="ver-paradas-btn">Ver reservas pendentes</button></div>'
-        : "";
+    const seletor = '<label class="mt-2 inline-flex items-center gap-2 text-sm text-slate-600">Considerar parada após <select id="horas-parada" class="field" style="width:auto;padding:.3rem .6rem">' + [24, 48, 72, 120].map((h) => '<option value="' + h + '"' + (h === HORAS_PARADA ? " selected" : "") + ">" + h + " h</option>").join("") + "</select></label>";
+    alvo.innerHTML = (paradas.length
+        ? '<div class="card alerta-parada"><p class="font-extrabold" style="color:#a84912">⏰ ' + paradas.length + (paradas.length === 1 ? " reserva está parada" : " reservas estão paradas") + " há mais de " + HORAS_PARADA + ' horas em "Pendente".</p><p class="mt-1 text-sm text-slate-600">' + paradas.slice(0, 5).map((r) => esc(texto(r.nomeCompleto, "Sem nome")) + " (#" + esc(texto(r.codigoProduto, "—")) + ")").join(" · ") + '</p><button type="button" class="btn btn-soft mt-3" id="ver-paradas-btn">Ver reservas pendentes</button></div>'
+        : "") + seletor;
 }
 
 function renderImpacto() {
@@ -295,6 +297,36 @@ function renderImpacto() {
     alvo.querySelectorAll("[data-contar]").forEach(contarAte);
 }
 
+// Redimensiona (máx. 1600px) e comprime em JPEG antes de enviar
+function comprimirImagem(arquivo) {
+    return new Promise((resolve) => {
+        const img = new Image();
+        const url = URL.createObjectURL(arquivo);
+        img.onload = () => {
+            const escala = Math.min(1, 1600 / Math.max(img.width, img.height));
+            const canvas = document.createElement("canvas");
+            canvas.width = Math.round(img.width * escala);
+            canvas.height = Math.round(img.height * escala);
+            const ctx = canvas.getContext("2d");
+            ctx.fillStyle = "#fff";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            URL.revokeObjectURL(url);
+            canvas.toBlob((blob) => resolve(blob && blob.size < arquivo.size ? blob : arquivo), "image/jpeg", 0.8);
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); resolve(arquivo); };
+        img.src = url;
+    });
+}
+
+function proximoCodigoLivre() {
+    const usados = new Set(produtos.map((p) => String(p.codigo)));
+    const numeros = produtos.map((p) => parseInt(p.codigo, 10)).filter((n) => Number.isFinite(n));
+    let n = (numeros.length ? Math.max(...numeros) : 0) + 1;
+    while (usados.has(String(n).padStart(3, "0"))) n++;
+    return String(n).padStart(3, "0");
+}
+
 async function enviarFoto() {
     const input = document.getElementById("product-arquivo");
     const status = document.getElementById("product-upload-status");
@@ -306,10 +338,11 @@ async function enviarFoto() {
     if (arquivo.size > 5 * 1024 * 1024) {
         toast("A foto passa de 5 MB. Escolha uma menor.", "erro"); input.value = ""; return;
     }
-    const ext = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" }[arquivo.type];
-    const caminho = (crypto.randomUUID ? crypto.randomUUID() : Date.now()) + "." + ext;
-    status.innerHTML = '<span class="spinner"></span> Enviando foto...';
-    const { error } = await sb.storage.from("fotos-produtos").upload(caminho, arquivo, { contentType: arquivo.type, upsert: false });
+    status.innerHTML = '<span class="spinner"></span> Otimizando foto...';
+    const otimizada = await comprimirImagem(arquivo);
+    const caminho = (crypto.randomUUID ? crypto.randomUUID() : Date.now()) + ".jpg";
+    status.innerHTML = '<span class="spinner"></span> Enviando foto (' + Math.round(otimizada.size / 1024) + " KB)...";
+    const { error } = await sb.storage.from("fotos-produtos").upload(caminho, otimizada, { contentType: "image/jpeg", upsert: false });
     if (error) {
         status.textContent = ""; toast("Não foi possível enviar a foto: " + erroAmigavel(error), "erro"); return;
     }
@@ -326,10 +359,10 @@ async function enviarFoto() {
 function duplicarProduto(id) {
     const original = produtos.find((p) => String(p.id) === String(id));
     if (!original) return;
-    abrirFormularioProduto(Object.assign({}, original, { id: "", codigo: "" }));
+    abrirFormularioProduto(Object.assign({}, original, { id: "", codigo: proximoCodigoLivre() }));
     document.getElementById("product-form-title").textContent = "Duplicar peça";
     document.getElementById("product-codigo").focus();
-    toast("Copiamos os dados. Informe um código novo e salve.", "info");
+    toast("Copiamos os dados com o próximo código livre. Revise e salve.", "info");
 }
 
 /* ---------------- PRODUTOS ---------------- */
@@ -544,7 +577,7 @@ function renderReservas() {
                 '<article class="card' + (reservaParada(r) ? " reserva-parada" : "") + '">' +
                 '<div class="flex flex-wrap items-start justify-between gap-3">' +
                 "<div>" +
-                '<p class="text-xs font-bold text-slate-500">' + esc(dataBonita(r.createdAt)) + (reservaParada(r) ? ' · <span style="color:#a84912">⏰ parada há mais de ' + DIAS_PARADA + " dias</span>" : "") + "</p>" +
+                '<p class="text-xs font-bold text-slate-500">' + esc(dataBonita(r.createdAt)) + (reservaParada(r) ? ' · <span style="color:#a84912">⏰ parada há mais de ' + HORAS_PARADA + " h</span>" : "") + "</p>" +
                 '<h3 class="brand-font text-lg font-bold" style="color:#092a46">' + esc(texto(r.nomeCompleto, "Sem nome")) + "</h3>" +
                 '<p class="text-sm text-slate-600">Contato: ' + esc(texto(r.contato, "não informado")) + "</p>" +
                 '<p class="text-sm text-slate-600">Peça: #' + esc(texto(r.codigoProduto, "—")) + " · " + esc(texto(r.nomeProduto, "—")) + "</p>" +
@@ -704,7 +737,23 @@ function ligarEventos() {
         document.getElementById(id).addEventListener("input", renderReservas)
     );
 
+    document.getElementById("export-reservas-anon-btn").addEventListener("click", () =>
+        baixarCSV(
+            "reservas-sem-contato.csv",
+            reservasFiltradas().map((r) => ({
+                data: dataBonita(r.createdAt),
+                codigo: r.codigoProduto,
+                peca: r.nomeProduto,
+                doacao: r.itemDoacao,
+                tipo: r.tipoDoacao,
+                quantidade: r.quantidade,
+                status: r.status
+            }))
+        )
+    );
+
     document.getElementById("export-reservas-btn").addEventListener("click", () =>
+        window.confirm("Esta planilha contém nomes e contatos (dados pessoais). Guarde-a em local seguro e não compartilhe. Continuar?") &&
         baixarCSV(
             "reservas.csv",
             reservasFiltradas().map((r) => ({
@@ -761,7 +810,24 @@ function ligarEventos() {
         }
     });
 
+    document.getElementById("equipe-form").addEventListener("submit", adicionarNaEquipe);
+    document.getElementById("esqueci-btn").addEventListener("click", esqueciSenha);
+    document.getElementById("senha-form").addEventListener("submit", salvarNovaSenha);
+    document.addEventListener("click", (e) => {
+        const r = e.target.closest("[data-remover-admin],[data-anonimizar]");
+        if (!r) return;
+        if (r.dataset.removerAdmin) removerDaEquipe(r.dataset.removerAdmin, r.dataset.email);
+        else anonimizarReserva(r.dataset.anonimizar);
+    });
+
     document.addEventListener("change", (e) => {
+        if (e.target.id === "horas-parada") {
+            HORAS_PARADA = Number(e.target.value) || 48;
+            localStorage.setItem("brecho-horas-parada", String(HORAS_PARADA));
+            renderAlertasParadas();
+            renderReservas();
+            return;
+        }
         if (e.target.dataset?.produtoStatus) {
             mudarStatusProduto(e.target.dataset.produtoStatus, e.target.value);
         } else if (e.target.dataset?.reservaStatus) {
@@ -770,8 +836,158 @@ function ligarEventos() {
     });
 }
 
+/* ---------------- EQUIPE, LGPD E HISTÓRICO ---------------- */
+
+async function carregarExtras() {
+    const [admins, log, pedidos, hist] = await Promise.all([
+        sb.rpc("listar_admins"),
+        sb.from("admin_log").select("*").order("criado_em", { ascending: false }).limit(50),
+        sb.from("pedidos_exclusao").select("*").order("criado_em", { ascending: false }).limit(200),
+        sb.from("historico").select("*").order("criado_em", { ascending: false }).limit(200)
+    ]);
+    renderEquipe(lista(admins.data), lista(log.data));
+    renderPedidos(lista(pedidos.data));
+    renderHistorico(lista(hist.data));
+}
+
+function renderEquipe(admins, log) {
+    const alvo = document.getElementById("equipe-list");
+    alvo.innerHTML = admins.length
+        ? admins.map((a) =>
+            '<div class="card flex flex-wrap items-center justify-between gap-3"><div><p class="font-bold" style="color:#092a46">' + esc(a.email) + '</p><p class="text-sm text-slate-500">Administradora</p></div>' +
+            (admins.length > 1 ? '<button type="button" class="btn btn-soft" style="color:#b23b16" data-remover-admin="' + esc(a.user_id) + '" data-email="' + esc(a.email) + '">Remover acesso</button>' : '<span class="text-xs text-slate-500">Única administradora — não pode ser removida</span>') +
+            "</div>").join("")
+        : '<div class="card text-slate-600">Nenhuma administradora encontrada.</div>';
+    document.getElementById("admin-log").innerHTML = log.length
+        ? log.map((l) => '<p class="text-sm text-slate-600">' + esc(dataBonita(l.criado_em)) + " · <strong>" + esc(l.autor_email || "sistema") + "</strong> " + esc(l.acao) + " <strong>" + esc(l.alvo_email) + "</strong></p>").join("")
+        : '<p class="text-sm text-slate-500">Nenhuma mudança de acesso registrada ainda.</p>';
+}
+
+async function adicionarNaEquipe(evento) {
+    evento.preventDefault();
+    const campo = document.getElementById("equipe-email");
+    const botao = document.getElementById("equipe-add-btn");
+    const email = campo.value.trim().toLowerCase();
+    if (!window.confirm("Dar acesso total ao painel para " + email + "?")) return;
+    botaoCarregando(botao, true, "Adicionando...");
+    try {
+        const { data: s } = await sb.auth.getSession();
+        const r = await fetch("/api/public/equipe-convidar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: "Bearer " + (s?.session?.access_token || "") },
+            body: JSON.stringify({ email })
+        });
+        const d = await r.json().catch(() => ({}));
+        if (!r.ok) throw new Error(d.erro || "Não foi possível adicionar.");
+        toast(d.acao === "convidou" ? "Convite enviado para " + email + ". A pessoa cria a senha pelo link do e-mail." : email + " agora é administradora.", "sucesso");
+        campo.value = "";
+        await carregarExtras();
+    } catch (erro) {
+        toast(erro.message, "erro");
+    } finally {
+        botaoCarregando(botao, false);
+    }
+}
+
+async function removerDaEquipe(userId, email) {
+    if (!window.confirm("Remover o acesso de " + email + " ao painel?")) return;
+    const { error } = await sb.rpc("remover_admin", { _user_id: userId });
+    if (error) {
+        toast(String(error.message).includes("ULTIMO_ADMIN") ? "Não é possível remover a última administradora." : erroAmigavel(error), "erro");
+        return;
+    }
+    toast("Acesso de " + email + " removido.", "sucesso");
+    await carregarExtras();
+}
+
+function renderPedidos(pedidos) {
+    const pendentes = pedidos.filter((p) => p.status === "Pendente");
+    document.getElementById("pedidos-count").textContent = pendentes.length ? String(pendentes.length) : "";
+    document.getElementById("pedidos-list").innerHTML = pedidos.length
+        ? pedidos.map((p) => {
+            const r = reservas.find((x) => x.id === p.reserva_id);
+            return '<div class="card flex flex-wrap items-center justify-between gap-3"><div><p class="text-xs font-bold text-slate-500">' + esc(dataBonita(p.criado_em)) + " · " + esc(p.status) + '</p><p class="font-bold" style="color:#092a46">' + esc(r ? texto(r.nomeCompleto, "—") + " · peça #" + texto(r.codigoProduto, "—") : "Reserva " + p.reserva_id.slice(0, 8)) + "</p></div>" +
+                (p.status === "Pendente" ? '<button type="button" class="btn btn-primary" data-anonimizar="' + esc(p.reserva_id) + '">Apagar nome e contato</button>' : '<span class="pill" style="background:#e6f4ea;color:#19723a">Concluído</span>') + "</div>";
+        }).join("")
+        : '<div class="card text-slate-600">Nenhum pedido de exclusão.</div>';
+}
+
+async function anonimizarReserva(id) {
+    if (!window.confirm("Apagar definitivamente o nome e o contato desta reserva?")) return;
+    const { error } = await sb.rpc("anonimizar_reserva", { _id: id });
+    if (error) return toast(erroAmigavel(error), "erro");
+    toast("Dados pessoais apagados.", "sucesso");
+    await carregarTudo();
+}
+
+function resumoMudanca(h) {
+    const antes = h.antes || {};
+    const depois = h.depois || {};
+    const item = depois.codigo || antes.codigo || depois.codigoProduto || antes.codigoProduto || "";
+    const nome = depois.nome || antes.nome || depois.nomeProduto || antes.nomeProduto || "";
+    if (h.acao === "INSERT") return (h.tabela === "produtos" ? "cadastrou a peça " : "nova reserva da peça ") + "#" + item + " " + nome;
+    if (h.acao === "DELETE") return (h.tabela === "produtos" ? "excluiu a peça " : "excluiu reserva da peça ") + "#" + item + " " + nome;
+    const campos = Object.keys(depois).filter((k) => JSON.stringify(antes[k]) !== JSON.stringify(depois[k]));
+    const status = campos.includes("status") ? ' (situação: "' + antes.status + '" → "' + depois.status + '")' : "";
+    return "alterou " + (h.tabela === "produtos" ? "a peça" : "reserva da peça") + " #" + item + " " + nome + status + (campos.length && !status ? " (" + campos.join(", ") + ")" : "");
+}
+
+function renderHistorico(hist) {
+    document.getElementById("historico-list").innerHTML = hist.length
+        ? hist.map((h) => '<p class="card text-sm text-slate-700" style="padding:.7rem 1rem">' + esc(dataBonita(h.criado_em)) + " · <strong>" + esc(h.autor_email || "site/sistema") + "</strong> " + esc(resumoMudanca(h)) + "</p>").join("")
+        : '<div class="card text-slate-600">Nenhuma alteração registrada ainda.</div>';
+}
+
+/* ---------------- SENHA ---------------- */
+
+async function esqueciSenha() {
+    const email = document.getElementById("login-email").value.trim();
+    if (!email) return mensagemLogin("Digite seu e-mail acima e toque em \"Esqueci minha senha\".", "#a84912");
+    const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + "/brecho/adm.html" });
+    mensagemLogin(error ? "Não foi possível enviar agora. Tente novamente." : "Se o e-mail for da equipe, você receberá um link para criar nova senha.", error ? "#b23b16" : "#19723a");
+}
+
+async function salvarNovaSenha(evento) {
+    evento.preventDefault();
+    const botao = document.getElementById("senha-btn");
+    const senha = document.getElementById("nova-senha").value;
+    if (senha.length < 8) return toast("A senha precisa ter pelo menos 8 caracteres.", "erro");
+    botaoCarregando(botao, true, "Salvando...");
+    const { error } = await sb.auth.updateUser({ password: senha });
+    botaoCarregando(botao, false);
+    if (error) return toast("Não foi possível salvar a senha: " + (error.message || ""), "erro");
+    history.replaceState(null, "", window.location.pathname);
+    document.getElementById("senha-view").hidden = true;
+    toast("Senha salva!", "sucesso");
+    if (await souAdmin()) await abrirPainel();
+    else document.getElementById("login-view").hidden = false;
+}
+
+/* ---------------- SAÍDA POR INATIVIDADE ---------------- */
+
+let timerInatividade = null;
+function reiniciarInatividade() {
+    clearTimeout(timerInatividade);
+    timerInatividade = setTimeout(async () => {
+        if (!document.getElementById("panel-view").hidden) {
+            await sair();
+            mensagemLogin("Você saiu automaticamente após 30 minutos sem uso.", "#a84912");
+        }
+    }, 30 * 60 * 1000);
+}
+
 async function iniciar() {
     ligarEventos();
+    ["click", "keydown", "touchstart"].forEach((ev) => document.addEventListener(ev, reiniciarInatividade, { passive: true }));
+    reiniciarInatividade();
+
+    const hash = window.location.hash;
+    if (/type=(invite|recovery)/.test(hash)) {
+        await sb.auth.getSession();
+        document.getElementById("login-view").hidden = true;
+        document.getElementById("senha-view").hidden = false;
+        return;
+    }
 
     if (await souAdmin()) {
         await abrirPainel();
