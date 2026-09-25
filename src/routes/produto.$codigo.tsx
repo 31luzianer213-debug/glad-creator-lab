@@ -18,13 +18,13 @@ export const Route = createFileRoute("/produto/$codigo")({
     if (!loaderData) {
       return {
         meta: [
-          { title: "Peça não encontrada · Brechó Solidário Online" },
+          { title: "Peça não encontrada · Bazar de Garagem" },
           { name: "robots", content: "noindex" },
         ],
       };
     }
     const p = loaderData.peca;
-    const titulo = `${p.nome} (tam. ${p.tamanho}) · Brechó Solidário`;
+    const titulo = `${p.nome} (tam. ${p.tamanho}) · Bazar de Garagem`;
     const descricao = (
       p.descricao ||
       `${nomeCategoria(p.categoria)}, tamanho ${p.tamanho}, estado ${p.estado}. Troca solidária: ${p.troca || "doação"}.`
@@ -96,7 +96,7 @@ function DetalhePeca() {
 
   async function compartilhar() {
     const url = `${window.location.origin}/produto/${encodeURIComponent(peca.codigo)}`;
-    const texto = `Olha essa peça no Brechó Solidário: ${peca.nome} (tam. ${peca.tamanho})`;
+    const texto = `Olha essa peça no Bazar de Garagem: ${peca.nome} (tam. ${peca.tamanho})`;
     if (navigator.share) {
       try {
         await navigator.share({ title: peca.nome, text: texto, url });

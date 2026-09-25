@@ -10,10 +10,10 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/avaliar")({
   head: () => ({
     meta: [
-      { title: "Avalie sua troca · Brechó Solidário Online" },
-      { name: "description", content: "Conte como foi sua experiência no Brechó Solidário e ajude a melhorar as próximas trocas." },
-      { property: "og:title", content: "Avalie sua troca · Brechó Solidário Online" },
-      { property: "og:description", content: "Sua opinião ajuda a melhorar o Brechó Solidário." },
+      { title: "Avalie sua troca · Bazar de Garagem" },
+      { name: "description", content: "Conte como foi sua experiência no Bazar de Garagem e ajude a melhorar as próximas trocas." },
+      { property: "og:title", content: "Avalie sua troca · Bazar de Garagem" },
+      { property: "og:description", content: "Sua opinião ajuda a melhorar o Bazar de Garagem." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${URL_SITE}/avaliar` },
       { name: "twitter:card", content: "summary" },

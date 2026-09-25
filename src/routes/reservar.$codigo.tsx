@@ -16,10 +16,10 @@ export const Route = createFileRoute("/reservar/$codigo")({
   },
   head: ({ loaderData }) => ({
     meta: [
-      { title: `Reservar ${loaderData?.peca.nome ?? "peça"} · Brechó Solidário` },
+      { title: `Reservar ${loaderData?.peca.nome ?? "peça"} · Bazar de Garagem` },
       { name: "description", content: "Solicite a reserva desta peça informando a doação que vai entregar na troca." },
       { name: "robots", content: "noindex" },
-      { property: "og:title", content: "Reservar peça · Brechó Solidário Online" },
+      { property: "og:title", content: "Reservar peça · Bazar de Garagem" },
       { property: "og:description", content: "Reserve a peça e informe sua doação solidária." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

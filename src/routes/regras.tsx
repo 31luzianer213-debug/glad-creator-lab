@@ -3,7 +3,7 @@ import { CheckCircle2 } from "lucide-react";
 import { SiteLayout, Cabecalho } from "@/components/brecho/Site";
 import { URL_SITE } from "@/lib/catalogo";
 
-const TITULO = "Regras da troca solidária · Brechó Solidário Online";
+const TITULO = "Regras da troca solidária · Bazar de Garagem";
 const DESCRICAO =
   "Entenda como funciona a troca: as peças não são vendidas, são trocadas por alimentos não perecíveis ou produtos de higiene novos.";
 

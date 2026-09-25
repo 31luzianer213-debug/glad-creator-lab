@@ -6,7 +6,7 @@ import { pecasQuery } from "@/lib/catalogo-queries";
 import { useFavoritos } from "@/lib/use-favoritos";
 import { URL_SITE } from "@/lib/catalogo";
 
-const TITULO = "Brechó Solidário Online · Roupas em troca de doações";
+const TITULO = "Bazar de Garagem · Roupas em troca de doações";
 const DESCRICAO =
   "Escolha roupas, calçados e acessórios e troque por alimentos não perecíveis ou itens de higiene. Consumo consciente que ajuda quem precisa.";
 const IMAGEM = "https://images.pexels.com/photos/6068975/pexels-photo-6068975.jpeg";
@@ -51,7 +51,7 @@ function Inicio() {
               Moda que vira solidariedade
             </p>
             <h1 className="mt-3 text-4xl font-extrabold leading-[1.02] text-secondary sm:text-6xl">
-              Brechó Solidário Online
+              Bazar de Garagem
             </h1>
             <p className="mt-5 max-w-lg text-lg text-muted-foreground">
               Aqui as roupas não são vendidas: você leva a peça que escolher e, em troca, doa um alimento
@@ -116,7 +116,7 @@ function Inicio() {
 
       <section className="mx-auto max-w-6xl px-4 py-14">
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <h2 className="text-2xl font-extrabold text-secondary sm:text-3xl">Chegaram agora</h2>
+          <h2 className="text-2xl font-extrabold text-secondary sm:text-3xl">Garimpos da semana</h2>
           <Link to="/produtos" className="font-bold text-primary underline underline-offset-4">
             Ver todas as peças
           </Link>

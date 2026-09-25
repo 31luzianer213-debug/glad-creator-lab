@@ -28,7 +28,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground">
               <Shirt size={18} aria-hidden />
             </span>
-            Brechó Solidário
+            Bazar de Garagem
           </Link>
           <nav aria-label="Principal" className="hidden items-center gap-1 md:flex">
             {LINKS.map((l) => (
@@ -73,7 +73,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       </main>
       <footer className="border-t border-border bg-secondary text-secondary-foreground">
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 text-sm sm:flex-row sm:items-center sm:justify-between">
-          <p>Brechó Solidário Online · Consumo consciente em movimento.</p>
+          <p>Bazar de Garagem · Consumo consciente em movimento.</p>
           <div className="flex gap-4">
             <Link to="/privacidade" className="underline underline-offset-4">
               Política de Privacidade

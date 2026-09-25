@@ -5,13 +5,13 @@ const URL_SITE = "https://glad-creator-lab.lovable.app/privacidade";
 export const Route = createFileRoute("/privacidade")({
   head: () => ({
     meta: [
-      { title: "Política de Privacidade · Brechó Solidário Online" },
+      { title: "Política de Privacidade · Bazar de Garagem" },
       {
         name: "description",
         content:
-          "Como o Brechó Solidário Online coleta, usa, guarda e apaga os dados de quem faz reservas e avaliações (LGPD).",
+          "Como o Bazar de Garagem coleta, usa, guarda e apaga os dados de quem faz reservas e avaliações (LGPD).",
       },
-      { property: "og:title", content: "Política de Privacidade · Brechó Solidário Online" },
+      { property: "og:title", content: "Política de Privacidade · Bazar de Garagem" },
       {
         property: "og:description",
         content: "Quais dados coletamos, por quanto tempo guardamos e como pedir a exclusão.",
@@ -38,7 +38,7 @@ function Privacidade() {
         <section className="space-y-2">
           <h2 className="text-xl font-bold">1. Quem é responsável</h2>
           <p>
-            O Brechó Solidário Online é mantido por <strong>[nome da organização responsável]</strong>.
+            O Bazar de Garagem é mantido por <strong>[nome da organização responsável]</strong>.
             Dúvidas ou pedidos sobre seus dados: <strong>[e-mail ou WhatsApp de contato]</strong>.
           </p>
         </section>

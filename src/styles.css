@@ -45,7 +45,8 @@
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
   --font-sans: "Work Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Fraunces", Georgia, serif;
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-brand: "Bebas Neue", Impact, sans-serif;
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -67,27 +68,27 @@
 
 :root {
   --radius: 1rem;
-  --background: oklch(0.975 0.012 75);
-  --foreground: oklch(0.27 0.065 250);
+  --background: oklch(0.985 0.02 95);
+  --foreground: oklch(0.26 0 0);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.27 0.065 250);
+  --card-foreground: oklch(0.26 0 0);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.27 0.065 250);
-  --primary: oklch(0.665 0.18 42);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.27 0.065 250);
-  --secondary-foreground: oklch(0.98 0.01 75);
-  --muted: oklch(0.945 0.018 75);
-  --muted-foreground: oklch(0.45 0.04 250);
-  --accent: oklch(0.93 0.05 60);
-  --accent-foreground: oklch(0.27 0.065 250);
+  --popover-foreground: oklch(0.26 0 0);
+  --primary: oklch(0.89 0.14 92);
+  --primary-foreground: oklch(0.26 0 0);
+  --secondary: oklch(0.26 0 0);
+  --secondary-foreground: oklch(0.96 0.05 95);
+  --muted: oklch(0.955 0.035 95);
+  --muted-foreground: oklch(0.42 0.01 90);
+  --accent: oklch(0.89 0.14 92);
+  --accent-foreground: oklch(0.26 0 0);
   --destructive: oklch(0.55 0.2 30);
   --destructive-foreground: oklch(1 0 0);
   --success: oklch(0.5 0.12 150);
   --success-foreground: oklch(1 0 0);
-  --border: oklch(0.9 0.02 75);
-  --input: oklch(0.88 0.02 75);
-  --ring: oklch(0.665 0.18 42);
+  --border: oklch(0.88 0.04 95);
+  --input: oklch(0.85 0.04 95);
+  --ring: oklch(0.26 0 0);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -159,4 +160,9 @@
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+@utility sublinhado-pincel {
+  background-image: linear-gradient(transparent 70%, var(--color-primary) 70%, var(--color-primary) 92%, transparent 92%);
+  padding-inline: 0.1em;
 }
