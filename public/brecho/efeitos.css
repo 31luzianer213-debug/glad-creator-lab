@@ -151,9 +151,9 @@ button { transition: transform .15s ease, background-color .2s ease, color .2s e
 /* ---------- Painel: contadores e alertas ---------- */
 .stat-card { animation: aparecer .45s ease both; }
 .alerta-parada { border-left: 4px solid #FFD95A; background: #fff7f1; animation: aparecer .4s ease both; }
-.reserva-parada { box-shadow: 0 0 0 2px #f4a47c; }
+.reserva-parada { box-shadow: 0 0 0 2px #FFE48A; }
 .barra-impacto { height: .6rem; border-radius: 999px; background: #eef2f4; overflow: hidden; }
-.barra-impacto > span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #FFD95A, #f4a47c); transform-origin: left; animation: crescer .9s ease-out both; }
+.barra-impacto > span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, #FFD95A, #FFE48A); transform-origin: left; animation: crescer .9s ease-out both; }
 @keyframes crescer { from { transform: scaleX(0); } }
 
 /* ---------- Menos movimento ---------- */

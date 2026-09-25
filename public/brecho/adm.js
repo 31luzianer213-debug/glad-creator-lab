@@ -289,9 +289,9 @@ function renderImpacto() {
     alvo.innerHTML =
         '<div class="flex flex-wrap items-end justify-between gap-3"><div><p class="text-xs font-extrabold tracking-[.14em]" style="color:#2B2B2B">PAINEL DE IMPACTO</p><h2 class="brand-font text-xl font-bold" style="color:#2B2B2B">O bem que já circulou</h2></div></div>' +
         '<div class="mt-4 grid gap-3 sm:grid-cols-3">' +
-        '<div class="rounded-xl bg-orange-50 p-4"><p class="text-xs font-bold text-slate-500">TROCAS NESTE MÊS</p><p class="brand-font text-3xl font-bold" style="color:#2B2B2B" data-contar="' + trocasMes + '">' + trocasMes + "</p></div>" +
-        '<div class="rounded-xl bg-orange-50 p-4"><p class="text-xs font-bold text-slate-500">TROCAS CONCLUÍDAS</p><p class="brand-font text-3xl font-bold" style="color:#2B2B2B" data-contar="' + concluidas.length + '">' + concluidas.length + "</p></div>" +
-        '<div class="rounded-xl bg-orange-50 p-4"><p class="text-xs font-bold text-slate-500">ITENS DOADOS</p><p class="brand-font text-3xl font-bold" style="color:#2B2B2B" data-contar="' + doacoes + '">' + doacoes + "</p></div>" +
+        '<div class="rounded-xl bg-amber-50 p-4"><p class="text-xs font-bold text-slate-500">TROCAS NESTE MÊS</p><p class="brand-font text-3xl font-bold" style="color:#2B2B2B" data-contar="' + trocasMes + '">' + trocasMes + "</p></div>" +
+        '<div class="rounded-xl bg-amber-50 p-4"><p class="text-xs font-bold text-slate-500">TROCAS CONCLUÍDAS</p><p class="brand-font text-3xl font-bold" style="color:#2B2B2B" data-contar="' + concluidas.length + '">' + concluidas.length + "</p></div>" +
+        '<div class="rounded-xl bg-amber-50 p-4"><p class="text-xs font-bold text-slate-500">ITENS DOADOS</p><p class="brand-font text-3xl font-bold" style="color:#2B2B2B" data-contar="' + doacoes + '">' + doacoes + "</p></div>" +
         "</div>" +
         '<p class="mt-5 text-sm font-bold text-slate-600">Reservas por situação</p><div class="mt-2 grid gap-2">' + barras + "</div>";
     alvo.querySelectorAll("[data-contar]").forEach(contarAte);

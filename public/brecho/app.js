@@ -327,10 +327,10 @@ async function carregarProdutos() {
         console.error("Erro ao carregar produtos:", erro);
         if (grid) {
             grid.innerHTML = `
-                <div class="col-span-full rounded-2xl border border-orange-200 bg-orange-50 p-8 text-center">
+                <div class="col-span-full rounded-2xl border border-orange-200 bg-amber-50 p-8 text-center">
                     <p class="font-bold text-slate-700">Não foi possível carregar as peças agora.</p>
                     <p class="mt-1 text-sm text-slate-600">Verifique sua conexão e tente novamente.</p>
-                    <button type="button" class="mt-4 rounded-xl bg-orange-500 px-5 py-3 font-bold text-white" onclick="carregarProdutos()">Tentar novamente</button>
+                    <button type="button" class="mt-4 rounded-xl bg-amber-500 px-5 py-3 font-bold text-white" onclick="carregarProdutos()">Tentar novamente</button>
                 </div>`;
         }
         toast("Não conseguimos carregar o catálogo. Tente novamente.", "erro");
@@ -469,8 +469,8 @@ function criarCardProduto(produto) {
                 <p><strong>Tamanho:</strong> ${escaparHTML(produto.size)}</p>
                 <p><strong>Conservação:</strong> ${escaparHTML(produto.condition)}</p>
             </div>
-            <div class="mt-4 rounded-xl bg-orange-50 p-3">
-                <p class="text-xs font-extrabold uppercase tracking-wide text-orange-700">Valor da troca</p>
+            <div class="mt-4 rounded-xl bg-amber-50 p-3">
+                <p class="text-xs font-extrabold uppercase tracking-wide text-amber-700">Valor da troca</p>
                 <p class="mt-1 font-bold text-slate-700">${escaparHTML(troca || "A combinar")}</p>
             </div>
             <button type="button" class="mt-5 w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-extrabold text-white transition hover:bg-orange-600"
@@ -784,7 +784,7 @@ function configurarReserva() {
                 confirmacao.innerHTML = `
                     <p class="font-extrabold text-slate-800">${escaparHTML(currentProduct.name)}</p>
                     <p class="mt-1 text-sm text-slate-600">Código da peça: ${escaparHTML(currentProduct.code)}</p>
-                    <p class="mt-3 text-sm font-bold text-orange-700">${escaparHTML(currentProduct.trade)}</p>`;
+                    <p class="mt-3 text-sm font-bold text-amber-700">${escaparHTML(currentProduct.trade)}</p>`;
             }
 
             const codigo = document.getElementById("confirmation-code");
@@ -821,7 +821,7 @@ function copiarCodigoReserva() {
 
 function soltarConfete() {
     if (MENOS_MOVIMENTO) return;
-    const cores = ["#FFD95A", "#2B2B2B", "#174d37", "#f4a47c", "#dce9dd"];
+    const cores = ["#FFD95A", "#2B2B2B", "#174d37", "#FFE48A", "#dce9dd"];
     const camada = document.createElement("div");
     camada.className = "confete-camada";
     for (let i = 0; i < 40; i++) {
