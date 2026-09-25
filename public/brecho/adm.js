@@ -226,8 +226,8 @@ async function abrirPainel() {
 function cartaoEstatistica(rotulo, valor, detalhe) {
     return (
         '<div class="card stat-card">' +
-        '<p class="text-xs font-extrabold tracking-[.14em]" style="color:#ef6b2e">' + esc(rotulo) + "</p>" +
-        '<p class="brand-font mt-1 text-3xl font-bold" style="color:#092a46" data-contar="' + esc(valor) + '">' + esc(valor) + "</p>" +
+        '<p class="text-xs font-extrabold tracking-[.14em]" style="color:#2B2B2B">' + esc(rotulo) + "</p>" +
+        '<p class="brand-font mt-1 text-3xl font-bold" style="color:#2B2B2B" data-contar="' + esc(valor) + '">' + esc(valor) + "</p>" +
         '<p class="mt-1 text-sm text-slate-600">' + esc(detalhe) + "</p>" +
         "</div>"
     );
@@ -284,14 +284,14 @@ function renderImpacto() {
     const total = reservas.length || 1;
     const barras = STATUS_RESERVA.map((s) => {
         const n = reservas.filter((r) => r.status === s).length;
-        return '<div class="grid grid-cols-[110px_1fr_32px] items-center gap-3 text-sm"><span class="font-semibold text-slate-600">' + s + '</span><div class="barra-impacto"><span style="width:' + Math.round((n / total) * 100) + '%"></span></div><strong style="color:#092a46">' + n + "</strong></div>";
+        return '<div class="grid grid-cols-[110px_1fr_32px] items-center gap-3 text-sm"><span class="font-semibold text-slate-600">' + s + '</span><div class="barra-impacto"><span style="width:' + Math.round((n / total) * 100) + '%"></span></div><strong style="color:#2B2B2B">' + n + "</strong></div>";
     }).join("");
     alvo.innerHTML =
-        '<div class="flex flex-wrap items-end justify-between gap-3"><div><p class="text-xs font-extrabold tracking-[.14em]" style="color:#ef6b2e">PAINEL DE IMPACTO</p><h2 class="brand-font text-xl font-bold" style="color:#092a46">O bem que já circulou</h2></div></div>' +
+        '<div class="flex flex-wrap items-end justify-between gap-3"><div><p class="text-xs font-extrabold tracking-[.14em]" style="color:#2B2B2B">PAINEL DE IMPACTO</p><h2 class="brand-font text-xl font-bold" style="color:#2B2B2B">O bem que já circulou</h2></div></div>' +
         '<div class="mt-4 grid gap-3 sm:grid-cols-3">' +
-        '<div class="rounded-xl bg-orange-50 p-4"><p class="text-xs font-bold text-slate-500">TROCAS NESTE MÊS</p><p class="brand-font text-3xl font-bold" style="color:#092a46" data-contar="' + trocasMes + '">' + trocasMes + "</p></div>" +
-        '<div class="rounded-xl bg-orange-50 p-4"><p class="text-xs font-bold text-slate-500">TROCAS CONCLUÍDAS</p><p class="brand-font text-3xl font-bold" style="color:#092a46" data-contar="' + concluidas.length + '">' + concluidas.length + "</p></div>" +
-        '<div class="rounded-xl bg-orange-50 p-4"><p class="text-xs font-bold text-slate-500">ITENS DOADOS</p><p class="brand-font text-3xl font-bold" style="color:#092a46" data-contar="' + doacoes + '">' + doacoes + "</p></div>" +
+        '<div class="rounded-xl bg-amber-50 p-4"><p class="text-xs font-bold text-slate-500">TROCAS NESTE MÊS</p><p class="brand-font text-3xl font-bold" style="color:#2B2B2B" data-contar="' + trocasMes + '">' + trocasMes + "</p></div>" +
+        '<div class="rounded-xl bg-amber-50 p-4"><p class="text-xs font-bold text-slate-500">TROCAS CONCLUÍDAS</p><p class="brand-font text-3xl font-bold" style="color:#2B2B2B" data-contar="' + concluidas.length + '">' + concluidas.length + "</p></div>" +
+        '<div class="rounded-xl bg-amber-50 p-4"><p class="text-xs font-bold text-slate-500">ITENS DOADOS</p><p class="brand-font text-3xl font-bold" style="color:#2B2B2B" data-contar="' + doacoes + '">' + doacoes + "</p></div>" +
         "</div>" +
         '<p class="mt-5 text-sm font-bold text-slate-600">Reservas por situação</p><div class="mt-2 grid gap-2">' + barras + "</div>";
     alvo.querySelectorAll("[data-contar]").forEach(contarAte);
@@ -409,7 +409,7 @@ function renderProdutos() {
                     : '<div style="width:88px;height:88px;border-radius:.75rem;background:#eef2f7;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:#64748b">Sem foto</div>') +
                 '<div style="flex:1 1 240px;min-width:0">' +
                 '<p class="text-xs font-bold text-slate-500">#' + esc(p.codigo) + " · " + esc(dataBonita(p.createdAt)) + "</p>" +
-                '<h3 class="brand-font text-lg font-bold" style="color:#092a46">' + esc(texto(p.nome, "Peça sem nome")) + "</h3>" +
+                '<h3 class="brand-font text-lg font-bold" style="color:#2B2B2B">' + esc(texto(p.nome, "Peça sem nome")) + "</h3>" +
                 '<p class="text-sm text-slate-600">' + esc(texto(p.tamanho, "Tamanho não informado")) + " · " + esc(texto(p.estado, "Estado não informado")) + "</p>" +
                 '<p class="mt-1 text-sm text-slate-600">Troca: ' + esc(texto(p.troca, "não informada")) + "</p>" +
                 '<span class="pill mt-2" style="color:' + st.cor + ";background:" + st.fundo + '">' + st.texto + "</span>" +
@@ -578,7 +578,7 @@ function renderReservas() {
                 '<div class="flex flex-wrap items-start justify-between gap-3">' +
                 "<div>" +
                 '<p class="text-xs font-bold text-slate-500">' + esc(dataBonita(r.createdAt)) + (reservaParada(r) ? ' · <span style="color:#a84912">⏰ parada há mais de ' + HORAS_PARADA + " h</span>" : "") + "</p>" +
-                '<h3 class="brand-font text-lg font-bold" style="color:#092a46">' + esc(texto(r.nomeCompleto, "Sem nome")) + "</h3>" +
+                '<h3 class="brand-font text-lg font-bold" style="color:#2B2B2B">' + esc(texto(r.nomeCompleto, "Sem nome")) + "</h3>" +
                 '<p class="text-sm text-slate-600">Contato: ' + esc(texto(r.contato, "não informado")) + "</p>" +
                 '<p class="text-sm text-slate-600">Peça: #' + esc(texto(r.codigoProduto, "—")) + " · " + esc(texto(r.nomeProduto, "—")) + "</p>" +
                 '<p class="text-sm text-slate-600">Doação: ' + esc(texto(r.itemDoacao, "—")) + " (" + esc(texto(r.tipoDoacao, "—")) + ") · qtd " + esc(r.quantidade ?? "—") + "</p>" +
@@ -654,7 +654,7 @@ function renderAvaliacoes() {
                 '<div class="flex flex-wrap items-start justify-between gap-3">' +
                 "<div>" +
                 '<p class="text-xs font-bold text-slate-500">' + esc(dataBonita(a.createdAt)) + "</p>" +
-                '<p class="brand-font text-lg font-bold" style="color:#092a46">Nota ' + esc(a.nota ?? "—") + "/5</p>" +
+                '<p class="brand-font text-lg font-bold" style="color:#2B2B2B">Nota ' + esc(a.nota ?? "—") + "/5</p>" +
                 '<p class="text-sm text-slate-600">Facilidade: ' + esc(texto(a.facilidade, "—")) + " · Satisfação: " + esc(texto(a.satisfacao, "—")) + "</p>" +
                 '<p class="text-sm text-slate-600">Participaria de novo: ' + esc(texto(a.participariaNovamente, "—")) + " · Recomendaria: " + esc(texto(a.recomendaria, "—")) + "</p>" +
                 (texto(a.sugestao, "") ? '<p class="mt-2 text-slate-700">“' + esc(a.sugestao) + "”</p>" : "") +
@@ -854,7 +854,7 @@ function renderEquipe(admins, log) {
     const alvo = document.getElementById("equipe-list");
     alvo.innerHTML = admins.length
         ? admins.map((a) =>
-            '<div class="card flex flex-wrap items-center justify-between gap-3"><div><p class="font-bold" style="color:#092a46">' + esc(a.email) + '</p><p class="text-sm text-slate-500">Administradora</p></div>' +
+            '<div class="card flex flex-wrap items-center justify-between gap-3"><div><p class="font-bold" style="color:#2B2B2B">' + esc(a.email) + '</p><p class="text-sm text-slate-500">Administradora</p></div>' +
             (admins.length > 1 ? '<button type="button" class="btn btn-soft" style="color:#b23b16" data-remover-admin="' + esc(a.user_id) + '" data-email="' + esc(a.email) + '">Remover acesso</button>' : '<span class="text-xs text-slate-500">Única administradora — não pode ser removida</span>') +
             "</div>").join("")
         : '<div class="card text-slate-600">Nenhuma administradora encontrada.</div>';
@@ -906,7 +906,7 @@ function renderPedidos(pedidos) {
     document.getElementById("pedidos-list").innerHTML = pedidos.length
         ? pedidos.map((p) => {
             const r = reservas.find((x) => x.id === p.reserva_id);
-            return '<div class="card flex flex-wrap items-center justify-between gap-3"><div><p class="text-xs font-bold text-slate-500">' + esc(dataBonita(p.criado_em)) + " · " + esc(p.status) + '</p><p class="font-bold" style="color:#092a46">' + esc(r ? texto(r.nomeCompleto, "—") + " · peça #" + texto(r.codigoProduto, "—") : "Reserva " + p.reserva_id.slice(0, 8)) + "</p></div>" +
+            return '<div class="card flex flex-wrap items-center justify-between gap-3"><div><p class="text-xs font-bold text-slate-500">' + esc(dataBonita(p.criado_em)) + " · " + esc(p.status) + '</p><p class="font-bold" style="color:#2B2B2B">' + esc(r ? texto(r.nomeCompleto, "—") + " · peça #" + texto(r.codigoProduto, "—") : "Reserva " + p.reserva_id.slice(0, 8)) + "</p></div>" +
                 (p.status === "Pendente" ? '<button type="button" class="btn btn-primary" data-anonimizar="' + esc(p.reserva_id) + '">Apagar nome e contato</button>' : '<span class="pill" style="background:#e6f4ea;color:#19723a">Concluído</span>') + "</div>";
         }).join("")
         : '<div class="card text-slate-600">Nenhum pedido de exclusão.</div>';

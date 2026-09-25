@@ -9,12 +9,12 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.58.0/dist/umd/supabase.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
   <link rel="stylesheet" href="efeitos.css">
-  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800&amp;family=Fraunces:opsz,wght@9..144,700;9..144,800&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700;800&amp;family=Playfair+Display:wght@700;800&amp;family=Bebas+Neue&amp;display=swap" rel="stylesheet">
   <style>
-   :root { --navy:#092a46; --orange:#ef6b2e; --cream:#fbf7ef; }
+   :root { --navy:#2B2B2B; --orange:#FFD95A; --cream:#FFFBF0; }
    * { box-sizing: border-box; }
-   body { margin:0; font-family:'Work Sans',system-ui,sans-serif; background:var(--cream); color:#17324a; }
-   .brand-font { font-family:'Fraunces',Georgia,serif; }
+   body { margin:0; font-family:'Work Sans',system-ui,sans-serif; background:var(--cream); color:#2B2B2B; }
+   .brand-font { font-family:'Playfair Display',Georgia,serif; }
    .field { width:100%; border:1px solid #cbd5e1; border-radius:.75rem; padding:.75rem 1rem; font-size:1rem; background:#fff; }
    .field:focus { outline:2px solid var(--orange); outline-offset:1px; }
    .btn { min-height:44px; border-radius:.75rem; padding:.7rem 1.1rem; font-weight:700; cursor:pointer; }
@@ -31,14 +31,16 @@
    .wrap-scroll { overflow-x:auto; }
    .pill { display:inline-block; border-radius:999px; padding:.15rem .6rem; font-size:.75rem; font-weight:700; }
   </style>
- </head>
+ <link rel="icon" type="image/png" href="/favicon.png">
+<style>[style*="background:#FFD95A"],[style*="background: rgb(255, 217, 90)"],.btn-primary,.step-number{color:#2B2B2B!important}.bg-brand-logo{width:44px;height:44px;border-radius:999px}.font-marca{font-family:'Bebas Neue',sans-serif;letter-spacing:.08em}</style>
+</head>
  <body>
 
   <header style="background:var(--navy)" class="text-white">
    <div class="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-4">
     <div>
-     <p class="text-xs font-extrabold tracking-[.18em]" style="color:#ffd0b8">ÁREA RESTRITA</p>
-     <h1 class="brand-font text-xl font-bold">Painel da equipe</h1>
+     <div class="flex items-center gap-3"><img src="/__l5e/assets-v1/69f2c993-b1b2-4653-b511-4676dbbfb211/logo-bazar.png" alt="Logo Bazar de Garagem" class="bg-brand-logo"><div><p class="font-marca text-sm" style="color:#FFD95A">BAZAR DE GARAGEM · ÁREA RESTRITA</p>
+     <h1 class="brand-font text-xl font-bold">Painel da equipe</h1></div></div>
     </div>
     <div class="flex items-center gap-2">
      <a href="/" target="_top" class="btn btn-soft" style="text-decoration:none">Ver o site</a>
