@@ -462,7 +462,7 @@ function criarCardProduto(produto) {
             </button>
         </div>
         <div class="p-5">
-            <p class="text-xs font-extrabold uppercase tracking-wider text-orange-600">Código ${codigo}</p>
+            <p class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Código ${codigo}</p>
             <h3 class="mt-1 text-lg font-extrabold text-slate-800">${escaparHTML(produto.name)}</h3>
             <p class="mt-2 text-sm text-slate-500">${escaparHTML(nomeCategoria(produto.category))}</p>
             <div class="mt-3 space-y-1 text-sm text-slate-600">
@@ -821,7 +821,7 @@ function copiarCodigoReserva() {
 
 function soltarConfete() {
     if (MENOS_MOVIMENTO) return;
-    const cores = ["#ef6b2e", "#092a46", "#174d37", "#f4a47c", "#dce9dd"];
+    const cores = ["#FFD95A", "#2B2B2B", "#174d37", "#f4a47c", "#dce9dd"];
     const camada = document.createElement("div");
     camada.className = "confete-camada";
     for (let i = 0; i < 40; i++) {
@@ -902,7 +902,7 @@ async function consultarReserva(codigo) {
 
         resultado.innerHTML = `
             <div class="track-card">
-                <p class="text-xs font-extrabold uppercase tracking-wider text-orange-600">Peça ${escaparHTML(reserva.codigoProduto)}</p>
+                <p class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Peça ${escaparHTML(reserva.codigoProduto)}</p>
                 <h3 class="mt-1 text-xl font-extrabold text-slate-800">${escaparHTML(reserva.nomeProduto)}</h3>
                 <p class="mt-1 text-sm text-slate-500">Solicitada em ${escaparHTML(data_)}</p>
                 ${
