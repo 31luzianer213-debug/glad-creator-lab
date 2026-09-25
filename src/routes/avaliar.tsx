@@ -62,7 +62,7 @@ function Avaliar() {
     return (
       <SiteLayout>
         <div className="mx-auto max-w-xl px-4 py-20 text-center">
-          <HeartHandshake size={64} className="mx-auto text-primary" aria-hidden />
+          <HeartHandshake size={64} className="mx-auto text-secondary" aria-hidden />
           <h1 className="mt-4 text-3xl font-extrabold text-secondary">Obrigado pela avaliação!</h1>
           <p className="mt-3 text-muted-foreground">Sua opinião ajuda a melhorar as próximas trocas.</p>
         </div>
@@ -93,7 +93,7 @@ function Avaliar() {
                   aria-pressed={nota === n}
                   className="rounded-lg p-1"
                 >
-                  <Star size={34} className={cn(n <= nota ? "fill-primary text-primary" : "text-border")} />
+                  <Star size={34} className={cn(n <= nota ? "fill-secondary text-secondary" : "text-border")} />
                 </button>
               ))}
             </div>

@@ -143,7 +143,7 @@ function MinhaReserva() {
             </h2>
             {cancelada ? (
               <p className="mt-4 rounded-xl bg-muted p-4 font-semibold">
-                Esta reserva foi cancelada. <Link to="/produtos" className="text-primary underline">Veja outras peças</Link>.
+                Esta reserva foi cancelada. <Link to="/produtos" className="text-secondary underline">Veja outras peças</Link>.
               </p>
             ) : (
               <ol className="mt-6 space-y-3">

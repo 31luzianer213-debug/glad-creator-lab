@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import { Heart, Menu, X, Shirt } from "lucide-react";
 import { cn } from "@/lib/utils";
+import logo from "@/assets/logo-bazar.png.asset.json";
 import { textoStatus, type Peca, ehNovidade, nomeCategoria } from "@/lib/catalogo";
 
 const LINKS = [
@@ -25,10 +26,8 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
           <Link to="/" className="flex items-center gap-2 font-display text-lg font-extrabold text-secondary">
-            <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground">
-              <Shirt size={18} aria-hidden />
-            </span>
-            Bazar de Garagem
+            <img src={logo.url} alt="" width={44} height={44} className="h-11 w-11 rounded-full" />
+            <span className="font-brand text-2xl font-normal tracking-wide">Bazar de Garagem</span>
           </Link>
           <nav aria-label="Principal" className="hidden items-center gap-1 md:flex">
             {LINKS.map((l) => (
@@ -73,7 +72,10 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       </main>
       <footer className="border-t border-border bg-secondary text-secondary-foreground">
         <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 text-sm sm:flex-row sm:items-center sm:justify-between">
-          <p>Bazar de Garagem · Consumo consciente em movimento.</p>
+          <div className="flex items-center gap-3">
+            <img src={logo.url} alt="Logo Bazar de Garagem" width={48} height={48} className="h-12 w-12 rounded-full" />
+            <p>Bazar de Garagem · Santarém - PA · Moda sustentável ♻️ · Novos e Usados 🛍️</p>
+          </div>
           <div className="flex gap-4">
             <Link to="/privacidade" className="underline underline-offset-4">
               Política de Privacidade
@@ -142,7 +144,7 @@ export function CartaoPeca({
           aria-label={favorita ? `Remover ${peca.nome} dos favoritos` : `Favoritar ${peca.nome}`}
           className="absolute right-3 top-3 z-10 grid h-10 w-10 place-items-center rounded-full bg-card/90 shadow"
         >
-          <Heart size={18} className={favorita ? "fill-primary text-primary" : "text-secondary"} />
+          <Heart size={18} className={favorita ? "fill-secondary text-secondary" : "text-secondary"} />
         </button>
       </div>
       <div className="flex flex-1 flex-col gap-1 p-5">
@@ -161,7 +163,7 @@ export function CartaoPeca({
         <p className="text-sm text-muted-foreground">
           Tamanho {peca.tamanho} · {peca.estado}
         </p>
-        {peca.troca && <p className="mt-auto pt-3 text-sm font-semibold text-primary">Troca: {peca.troca}</p>}
+        {peca.troca && <p className="mt-auto pt-3 text-sm font-semibold text-secondary">Troca: {peca.troca}</p>}
       </div>
     </article>
   );
@@ -170,8 +172,8 @@ export function CartaoPeca({
 export function Cabecalho({ kicker, titulo, children }: { kicker: string; titulo: string; children?: ReactNode }) {
   return (
     <div className="mb-8">
-      <p className="text-sm font-extrabold uppercase tracking-[.16em] text-primary">{kicker}</p>
-      <h1 className="mt-2 text-3xl font-extrabold text-secondary sm:text-4xl">{titulo}</h1>
+      <p className="font-brand text-lg tracking-[.12em] text-secondary">{kicker}</p>
+      <h1 className="mt-2 text-3xl font-extrabold text-secondary sm:text-4xl"><span className="sublinhado-pincel">{titulo}</span></h1>
       {children && <div className="mt-3 max-w-2xl text-muted-foreground">{children}</div>}
     </div>
   );

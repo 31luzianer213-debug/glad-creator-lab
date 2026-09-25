@@ -40,7 +40,7 @@ function Regras() {
         <ul className="space-y-4 rounded-[1.5rem] bg-card p-6 shadow-sm sm:p-10">
           {REGRAS.map((r) => (
             <li key={r} className="flex gap-3 text-secondary">
-              <CheckCircle2 className="mt-0.5 shrink-0 text-primary" aria-hidden />
+              <CheckCircle2 className="mt-0.5 shrink-0 text-secondary" aria-hidden />
               <span>{r}</span>
             </li>
           ))}
