@@ -13,9 +13,9 @@ export const Route = createFileRoute("/minha-reserva")({
   validateSearch: z.object({ codigo: z.string().max(40).optional().catch(undefined) }),
   head: () => ({
     meta: [
-      { title: "Minha reserva · Brechó Solidário Online" },
-      { name: "description", content: "Acompanhe a situação da sua reserva no Brechó Solidário usando o código recebido." },
-      { property: "og:title", content: "Minha reserva · Brechó Solidário Online" },
+      { title: "Minha reserva · Bazar de Garagem" },
+      { name: "description", content: "Acompanhe a situação da sua reserva no Bazar de Garagem usando o código recebido." },
+      { property: "og:title", content: "Minha reserva · Bazar de Garagem" },
       { property: "og:description", content: "Consulte a situação da sua reserva com o código de acompanhamento." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${URL_SITE}/minha-reserva` },
@@ -143,7 +143,7 @@ function MinhaReserva() {
             </h2>
             {cancelada ? (
               <p className="mt-4 rounded-xl bg-muted p-4 font-semibold">
-                Esta reserva foi cancelada. <Link to="/produtos" className="text-primary underline">Veja outras peças</Link>.
+                Esta reserva foi cancelada. <Link to="/produtos" className="text-secondary underline">Veja outras peças</Link>.
               </p>
             ) : (
               <ol className="mt-6 space-y-3">

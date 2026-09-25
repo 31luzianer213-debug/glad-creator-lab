@@ -16,10 +16,10 @@ export const Route = createFileRoute("/reservar/$codigo")({
   },
   head: ({ loaderData }) => ({
     meta: [
-      { title: `Reservar ${loaderData?.peca.nome ?? "peça"} · Brechó Solidário` },
+      { title: `Reservar ${loaderData?.peca.nome ?? "peça"} · Bazar de Garagem` },
       { name: "description", content: "Solicite a reserva desta peça informando a doação que vai entregar na troca." },
       { name: "robots", content: "noindex" },
-      { property: "og:title", content: "Reservar peça · Brechó Solidário Online" },
+      { property: "og:title", content: "Reservar peça · Bazar de Garagem" },
       { property: "og:description", content: "Reserve a peça e informe sua doação solidária." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -131,7 +131,7 @@ function Reservar() {
   return (
     <SiteLayout>
       <div className="mx-auto max-w-3xl px-4 py-10">
-        <Link to="/produto/$codigo" params={{ codigo }} className="inline-flex items-center gap-2 text-sm font-bold text-secondary hover:text-primary">
+        <Link to="/produto/$codigo" params={{ codigo }} className="inline-flex items-center gap-2 text-sm font-bold text-secondary hover:text-secondary">
           <ArrowLeft size={18} /> Voltar à peça
         </Link>
         <div className="mt-6">
@@ -143,7 +143,7 @@ function Reservar() {
 
         {peca.status !== "available" ? (
           <p className="rounded-2xl bg-muted p-6 font-semibold">
-            Poxa, essa peça acabou de ser reservada. <Link to="/produtos" className="text-primary underline">Veja outras peças</Link>.
+            Poxa, essa peça acabou de ser reservada. <Link to="/produtos" className="text-secondary underline">Veja outras peças</Link>.
           </p>
         ) : (
           <form
@@ -190,7 +190,7 @@ function Reservar() {
               <input type="checkbox" name="consentimento" required className="mt-1" />
               <span className="text-sm leading-relaxed text-muted-foreground">
                 Li e aceito a{" "}
-                <Link to="/privacidade" target="_blank" className="font-bold text-primary underline">Política de Privacidade</Link>.
+                <Link to="/privacidade" target="_blank" className="font-bold text-secondary underline">Política de Privacidade</Link>.
                 Meu nome e contato serão usados só para combinar esta troca e apagados até 6 meses após a conclusão.
               </span>
             </label>

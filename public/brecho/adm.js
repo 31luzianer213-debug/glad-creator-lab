@@ -1,4 +1,4 @@
-/* Painel da equipe do Brechó Solidário — página separada do site público. */
+/* Painel da equipe do Bazar de Garagem — página separada do site público. */
 
 const SUPABASE_URL = "https://wwdrvysclsmxsldybafu.supabase.co";
 const SUPABASE_KEY = "sb_publishable_9WYUQNJKGCjXwyYKpexOfg_P_NdGbKX";

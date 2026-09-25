@@ -18,13 +18,13 @@ export const Route = createFileRoute("/produto/$codigo")({
     if (!loaderData) {
       return {
         meta: [
-          { title: "Peça não encontrada · Brechó Solidário Online" },
+          { title: "Peça não encontrada · Bazar de Garagem" },
           { name: "robots", content: "noindex" },
         ],
       };
     }
     const p = loaderData.peca;
-    const titulo = `${p.nome} (tam. ${p.tamanho}) · Brechó Solidário`;
+    const titulo = `${p.nome} (tam. ${p.tamanho}) · Bazar de Garagem`;
     const descricao = (
       p.descricao ||
       `${nomeCategoria(p.categoria)}, tamanho ${p.tamanho}, estado ${p.estado}. Troca solidária: ${p.troca || "doação"}.`
@@ -96,7 +96,7 @@ function DetalhePeca() {
 
   async function compartilhar() {
     const url = `${window.location.origin}/produto/${encodeURIComponent(peca.codigo)}`;
-    const texto = `Olha essa peça no Brechó Solidário: ${peca.nome} (tam. ${peca.tamanho})`;
+    const texto = `Olha essa peça no Bazar de Garagem: ${peca.nome} (tam. ${peca.tamanho})`;
     if (navigator.share) {
       try {
         await navigator.share({ title: peca.nome, text: texto, url });
@@ -118,7 +118,7 @@ function DetalhePeca() {
   return (
     <SiteLayout>
       <div className="mx-auto max-w-6xl px-4 py-10">
-        <Link to="/produtos" className="inline-flex items-center gap-2 text-sm font-bold text-secondary hover:text-primary">
+        <Link to="/produtos" className="inline-flex items-center gap-2 text-sm font-bold text-secondary hover:text-secondary">
           <ArrowLeft size={18} /> Voltar ao catálogo
         </Link>
         <div className="mt-6 grid gap-10 md:grid-cols-2">
@@ -172,7 +172,7 @@ function DetalhePeca() {
                 aria-pressed={favorita}
                 className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-5 py-3 font-bold text-secondary"
               >
-                <Heart size={18} className={favorita ? "fill-primary text-primary" : ""} /> {favorita ? "Favorita" : "Favoritar"}
+                <Heart size={18} className={favorita ? "fill-secondary text-secondary" : ""} /> {favorita ? "Favorita" : "Favoritar"}
               </button>
               <button
                 type="button"

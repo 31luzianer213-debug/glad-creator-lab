@@ -647,7 +647,7 @@ function compartilharWhatsApp() {
     } catch (_) {
         link = document.referrer || window.location.origin;
     }
-    const texto = `Olha essa peça no Brechó Solidário: ${currentProduct.name} (código ${currentProduct.code}). Troca: ${currentProduct.trade || "a combinar"}. ${link}`;
+    const texto = `Olha essa peça no Bazar de Garagem: ${currentProduct.name} (código ${currentProduct.code}). Troca: ${currentProduct.trade || "a combinar"}. ${link}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, "_blank", "noopener");
 }
 

@@ -7,7 +7,7 @@ import { pecasQuery } from "@/lib/catalogo-queries";
 import { useFavoritos } from "@/lib/use-favoritos";
 import { CATEGORIAS, URL_SITE, buscaNormalizada, nomeCategoria } from "@/lib/catalogo";
 
-const TITULO = "Catálogo de peças · Brechó Solidário Online";
+const TITULO = "Catálogo de peças · Bazar de Garagem";
 const DESCRICAO =
   "Roupas adultas, infantis, calçados e acessórios disponíveis para troca solidária por alimentos ou itens de higiene.";
 

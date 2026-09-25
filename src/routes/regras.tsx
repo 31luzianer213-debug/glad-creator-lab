@@ -3,7 +3,7 @@ import { CheckCircle2 } from "lucide-react";
 import { SiteLayout, Cabecalho } from "@/components/brecho/Site";
 import { URL_SITE } from "@/lib/catalogo";
 
-const TITULO = "Regras da troca solidária · Brechó Solidário Online";
+const TITULO = "Regras da troca solidária · Bazar de Garagem";
 const DESCRICAO =
   "Entenda como funciona a troca: as peças não são vendidas, são trocadas por alimentos não perecíveis ou produtos de higiene novos.";
 
@@ -40,7 +40,7 @@ function Regras() {
         <ul className="space-y-4 rounded-[1.5rem] bg-card p-6 shadow-sm sm:p-10">
           {REGRAS.map((r) => (
             <li key={r} className="flex gap-3 text-secondary">
-              <CheckCircle2 className="mt-0.5 shrink-0 text-primary" aria-hidden />
+              <CheckCircle2 className="mt-0.5 shrink-0 text-secondary" aria-hidden />
               <span>{r}</span>
             </li>
           ))}

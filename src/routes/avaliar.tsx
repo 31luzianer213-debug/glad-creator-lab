@@ -10,10 +10,10 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/avaliar")({
   head: () => ({
     meta: [
-      { title: "Avalie sua troca · Brechó Solidário Online" },
-      { name: "description", content: "Conte como foi sua experiência no Brechó Solidário e ajude a melhorar as próximas trocas." },
-      { property: "og:title", content: "Avalie sua troca · Brechó Solidário Online" },
-      { property: "og:description", content: "Sua opinião ajuda a melhorar o Brechó Solidário." },
+      { title: "Avalie sua troca · Bazar de Garagem" },
+      { name: "description", content: "Conte como foi sua experiência no Bazar de Garagem e ajude a melhorar as próximas trocas." },
+      { property: "og:title", content: "Avalie sua troca · Bazar de Garagem" },
+      { property: "og:description", content: "Sua opinião ajuda a melhorar o Bazar de Garagem." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: `${URL_SITE}/avaliar` },
       { name: "twitter:card", content: "summary" },
@@ -62,7 +62,7 @@ function Avaliar() {
     return (
       <SiteLayout>
         <div className="mx-auto max-w-xl px-4 py-20 text-center">
-          <HeartHandshake size={64} className="mx-auto text-primary" aria-hidden />
+          <HeartHandshake size={64} className="mx-auto text-secondary" aria-hidden />
           <h1 className="mt-4 text-3xl font-extrabold text-secondary">Obrigado pela avaliação!</h1>
           <p className="mt-3 text-muted-foreground">Sua opinião ajuda a melhorar as próximas trocas.</p>
         </div>
@@ -93,7 +93,7 @@ function Avaliar() {
                   aria-pressed={nota === n}
                   className="rounded-lg p-1"
                 >
-                  <Star size={34} className={cn(n <= nota ? "fill-primary text-primary" : "text-border")} />
+                  <Star size={34} className={cn(n <= nota ? "fill-secondary text-secondary" : "text-border")} />
                 </button>
               ))}
             </div>

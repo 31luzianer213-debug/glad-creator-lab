@@ -6,7 +6,7 @@ import { pecasQuery } from "@/lib/catalogo-queries";
 import { useFavoritos } from "@/lib/use-favoritos";
 import { URL_SITE } from "@/lib/catalogo";
 
-const TITULO = "Brechó Solidário Online · Roupas em troca de doações";
+const TITULO = "Bazar de Garagem · Roupas em troca de doações";
 const DESCRICAO =
   "Escolha roupas, calçados e acessórios e troque por alimentos não perecíveis ou itens de higiene. Consumo consciente que ajuda quem precisa.";
 const IMAGEM = "https://images.pexels.com/photos/6068975/pexels-photo-6068975.jpeg";
@@ -47,11 +47,11 @@ function Inicio() {
       <section className="relative overflow-hidden">
         <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 md:grid-cols-2 md:py-20">
           <div>
-            <p className="text-sm font-extrabold uppercase tracking-[.16em] text-primary">
-              Moda que vira solidariedade
+            <p className="font-brand text-xl tracking-[.12em] text-secondary">
+              Os melhores garimpos aqui!
             </p>
             <h1 className="mt-3 text-4xl font-extrabold leading-[1.02] text-secondary sm:text-6xl">
-              Brechó Solidário Online
+              <span className="sublinhado-pincel">Bazar de Garagem</span>
             </h1>
             <p className="mt-5 max-w-lg text-lg text-muted-foreground">
               Aqui as roupas não são vendidas: você leva a peça que escolher e, em troca, doa um alimento
@@ -95,6 +95,9 @@ function Inicio() {
         </div>
       </section>
 
+      <div className="border-y-2 border-secondary bg-primary py-3 text-center font-brand text-lg tracking-[.12em] text-primary-foreground">
+        25 de Setembro · Santarém - PA · Moda sustentável ♻️ · Novos e Usados 🛍️ · Empreendedorismo
+      </div>
       <section className="bg-card py-14">
         <div className="mx-auto max-w-6xl px-4">
           <h2 className="text-2xl font-extrabold text-secondary sm:text-3xl">Como funciona a troca?</h2>
@@ -116,8 +119,8 @@ function Inicio() {
 
       <section className="mx-auto max-w-6xl px-4 py-14">
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <h2 className="text-2xl font-extrabold text-secondary sm:text-3xl">Chegaram agora</h2>
-          <Link to="/produtos" className="font-bold text-primary underline underline-offset-4">
+          <h2 className="text-2xl font-extrabold text-secondary sm:text-3xl">Garimpos da semana</h2>
+          <Link to="/produtos" className="font-bold text-secondary underline underline-offset-4">
             Ver todas as peças
           </Link>
         </div>
